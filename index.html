@@ -1373,8 +1373,7 @@
     return CATS.find(c => c.name.toLowerCase() === String(name || '').trim().toLowerCase()); 
   }
   
-  function fmt(v){
-    return 'R$ ' + parseFloat(v).toFixed(2).replace('.',',')
+  function fmt(v){ return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
   }
   
   function fmtDate(d){ 
