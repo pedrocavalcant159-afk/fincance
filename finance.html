@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planilha Financeira Família</title>
+<style>
+/* ESTILOS BASE E TEMAS */
+:root {
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --color-background-tertiary: #f4f4f5; --color-background-primary: #fff; --color-background-secondary: #fafafa;
+  --color-border-tertiary: #e4e4e7; --color-text-primary: #18181b; --color-text-secondary: #71717a;
+  --color-bg-active: #e0f2fe; --color-text-active: #0284c7; --color-border-active: #bae6fd; --color-hover: #f4f4f5;
+}
+body.dark-theme {
+  --color-background-tertiary: #09090b; --color-background-primary: #18181b; --color-background-secondary: #27272a;
+  --color-border-tertiary: #3f3f46; --color-text-primary: #f4f4f5; --color-text-secondary: #a1a1aa;
+  --color-bg-active: #082f49; --color-text-active: #38bdf8; --color-border-active: #0284c7; --color-hover: #3f3f46;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary); transition: background-color 0.3s, color 0.3s;}
+
+/* LAYOUT PRINCIPAL */
+.app{display:flex;height:100vh;min-height:600px;background:var(--color-background-primary)}
+.sidebar{width:260px;min-width:260px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;transition:width 0.2s}
+.sidebar.collapsed{width:52px;min-width:52px}
+.sidebar-header{padding:16px 12px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px}
+.sidebar-title{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;color:var(--color-text-primary)}
+.sidebar.collapsed .sidebar-title, .sidebar.collapsed .evt-meta, .sidebar.collapsed .add-evt-btn span, .sidebar.collapsed .evt-detail{display:none}
+.toggle-btn{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--color-text-secondary);font-size:12px}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-title{font-size:16px;font-weight:500; display: flex; align-items: center; gap: 10px;}
+.user-welcome { font-size: 13px; font-weight: 400; color: var(--color-text-secondary); margin-left: 4px; }
+.month-nav{display:flex;align-items:center;gap:8px}
+.month-nav button{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;color:var(--color-text-primary)}
+.month-nav button:hover{background:var(--color-hover)}
+.month-label{font-size:14px;font-weight:500;min-width:120px;text-align:center}
+
+/* ABAS E CONTEÚDO */
+.tabs{display:flex;gap:4px}
+.tab{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:13px;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-bg-active);color:var(--color-text-active);border-color:var(--color-border-active)}
+.content{flex:1;overflow-y:auto;padding:20px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:12px;margin-bottom:20px}
+.metric-card{background:var(--color-background-secondary);border-radius:8px;padding:14px 16px;border:0.5px solid var(--color-border-tertiary)}
+.metric-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:500}
+.metric-value.green{color:#1D9E75} .metric-value.red{color:#E24B4A} .metric-value.blue{color:#378ADD} .metric-value.orange{color:#d97706}
+.section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:16px;margin-bottom:16px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:14px;font-weight:500}
+
+/* BOTÕES E TABELAS */
+.add-btn{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px}
+.add-btn:hover{background:var(--color-hover)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--color-text-secondary);font-weight:400;padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+td{padding:8px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+tr:hover td{background:var(--color-background-secondary)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.badge-fixo{background:#E6F1FB;color:#185FA5} .badge-variavel{background:#FAEEDA;color:#854F0B} .badge-entrada{background:#EAF3DE;color:#3B6D11} .badge-saida{background:#FCEBEB;color:#A32D2D}
+body.dark-theme .badge-fixo{background:rgba(24,95,165,0.2);color:#bae6fd} body.dark-theme .badge-variavel{background:rgba(133,79,11,0.2);color:#fde68a} body.dark-theme .badge-entrada{background:rgba(59,109,17,0.2);color:#a7f3d0} body.dark-theme .badge-saida{background:rgba(163,45,45,0.2);color:#fca5a5}
+.cat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.cat-tag{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.actions{display:flex;gap:6px}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:14px;padding:2px 4px;border-radius:4px}
+.icon-btn:hover{color:var(--color-text-primary);background:var(--color-hover)}
+
+/* EVENTOS NO SIDEBAR */
+.evt-list{flex:1;overflow-y:auto;padding:8px 12px}
+.evt-item{background:var(--color-background-secondary);border-radius:6px;padding:10px 12px;margin-bottom:8px;cursor:pointer;border:0.5px solid var(--color-border-tertiary);transition:border-color 0.15s}
+.evt-item:hover{border-color:var(--color-text-secondary)} .evt-item.selected{border-color:var(--color-border-active);background:var(--color-bg-active)}
+.evt-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evt-meta{font-size:11px;color:var(--color-text-secondary);margin-top:3px;display:flex;gap:8px;white-space:nowrap;overflow:hidden}
+.add-evt-btn{margin:0 12px 12px;background:none;border:0.5px dashed var(--color-border-tertiary);border-radius:6px;padding:8px;cursor:pointer;font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* MODAIS E FORMULÁRIOS */
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000}
+.modal{background:var(--color-background-primary);border-radius:8px;border:0.5px solid var(--color-border-tertiary);padding:20px;width:380px;max-width:90%;box-shadow: 0 10px 25px rgba(0,0,0,0.1)}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:16px}
+.form-row{margin-bottom:12px} .form-row label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px; text-align: left;}
+.form-row input,.form-row select,.form-row textarea{width:100%;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:7px 10px;font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);font-family:inherit}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:none;border-color:#0ea5e9}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn-cancel{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:7px 16px;cursor:pointer;font-size:13px;color:var(--color-text-secondary)}
+.btn-save{background:#0ea5e9;border:0.5px solid #0284c7;border-radius:6px;padding:7px 16px;cursor:pointer;font-size:13px;color:#fff;font-weight:500}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bar-wrap{height:8px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden;flex:1}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.3s}
+.cat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+.cat-name{min-width:90px;color:var(--color-text-secondary)} .cat-val{min-width:70px;text-align:right;color:var(--color-text-primary)}
+.evt-detail{padding:12px;font-size:13px;color:var(--color-text-secondary);border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 8px;}
+.chip{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-secondary);margin-right:4px;margin-bottom:4px}
+.hidden{display:none !important}
+.app-wrap{position:relative;height:100vh;overflow:hidden;}
+.pane-view{display:none}.pane-view.active{display:block}
+.cat-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.cat-subtab{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;color:var(--color-text-secondary)}
+.cat-subtab.active{background:var(--color-bg-active);color:var(--color-text-active);border-color:var(--color-border-active)}
+.cat-subpane{display:none} .cat-subpane.active{display:block}
+
+/* ESTILOS DE AUTENTICAÇÃO E CADASTRO */
+.auth-overlay {
+  position: absolute; inset: 0; background: var(--color-background-tertiary);
+  display: flex; align-items: center; justify-content: center; z-index: 3000;
+}
+.auth-box {
+  background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 12px; padding: 30px; width: 380px; max-width: 90%; text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+.auth-title { font-size: 20px; font-weight: 500; margin-bottom: 20px; color: var(--color-text-primary); }
+.auth-btn-primary { width: 100%; background: #0ea5e9; color: #fff; border: none; border-radius: 6px; padding: 10px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 10px; margin-bottom: 10px;}
+.auth-btn-primary:hover { opacity: 0.9; }
+.auth-btn-secondary { width: 100%; background: transparent; color: var(--color-text-secondary); border: 1px solid var(--color-border-tertiary); border-radius: 6px; padding: 10px; font-size: 14px; cursor: pointer; margin-bottom: 10px;}
+.auth-btn-secondary:hover { background: var(--color-hover); color: var(--color-text-primary); }
+.auth-btn-visitor { color: #0ea5e9; background: none; border: none; font-size: 13px; cursor: pointer; margin-top: 15px; text-decoration: underline;}
+.logout-btn { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; }
+.visitor-badge { background: #fef08a; color: #854d0e; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+body.dark-theme .logout-btn { background: rgba(185, 28, 28, 0.2); border-color: rgba(248, 113, 113, 0.3); color: #fca5a5;}
+body.dark-theme .visitor-badge { background: rgba(133, 77, 14, 0.3); color: #fde047;}
+.msg-error { color: #e24b4a; font-size: 12px; margin-top: 10px; min-height: 15px; }
+.msg-success { color: #1D9E75; font-size: 13px; margin-bottom: 15px; font-weight: 500; min-height: 15px; }
+</style>
+</head>
+<body>
+
+<div class="app-wrap">
+  
+  <div class="auth-overlay" id="authScreen">
+    
+    <div class="auth-box" id="loginBox">
+      <h2 class="auth-title">Planilha Financeira</h2>
+      <div id="loginSuccessMsg" class="msg-success"></div>
+      <div class="form-row">
+        <label>E-mail</label>
+        <input type="email" id="authEmail" placeholder="seu@email.com">
+      </div>
+      <div class="form-row">
+        <label>Senha</label>
+        <input type="password" id="authPassword" placeholder="******">
+      </div>
+      <button class="auth-btn-primary" onclick="handleLogin()">Entrar</button>
+      <button class="auth-btn-secondary" onclick="toggleAuthView('signup')">Criar nova conta</button>
+      <div id="authError" class="msg-error"></div>
+      <button class="auth-btn-visitor" onclick="enterAsVisitor()">Entrar como Visitante (Não salva)</button>
+    </div>
+
+    <div class="auth-box hidden" id="signupBox">
+      <h2 class="auth-title">Criar Nova Conta</h2>
+      <div class="form-row">
+        <label>Nome de Usuário</label>
+        <input type="text" id="regUser" placeholder="Como quer ser chamado?">
+      </div>
+      <div class="form-row">
+        <label>E-mail</label>
+        <input type="email" id="regEmail" placeholder="seu@email.com">
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label>Senha</label>
+          <input type="password" id="regPass" placeholder="Mínimo 6 let.">
+        </div>
+        <div class="form-row">
+          <label>Confirmar Senha</label>
+          <input type="password" id="regPassConfirm" placeholder="Repita">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Preferência de Tema</label>
+        <select id="regTheme">
+          <option value="light">Modo Claro</option>
+          <option value="dark">Modo Escuro</option>
+        </select>
+      </div>
+      <button class="auth-btn-primary" onclick="executeSignup()">Criar minha conta</button>
+      <button class="auth-btn-secondary" onclick="toggleAuthView('login')">Voltar para o Login</button>
+      <div id="signupError" class="msg-error"></div>
+    </div>
+
+  </div>
+
+  <div class="app hidden" id="app">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="toggle-btn" id="toggleSidebar" title="Recolher">☰</button>
+        <span class="sidebar-title">Eventos</span>
+      </div>
+      <div class="evt-list" id="evtList"></div>
+      <button class="add-evt-btn" id="addEvtBtn"><span style="font-size:16px">+</span><span>Novo evento</span></button>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title">
+          Planilha
+          <span id="userNameDisplay" class="user-welcome"></span>
+          <span id="visitorBadge" class="visitor-badge hidden">Modo Visitante</span>
+        </div>
+        <div style="display:flex; align-items:center; gap: 16px;">
+          <div class="month-nav">
+            <button id="prevMonth">&#8249;</button>
+            <span class="month-label" id="monthLabel"></span>
+            <button id="nextMonth">&#8250;</button>
+          </div>
+          <button id="themeToggle" class="icon-btn" title="Alternar Tema">🌓</button>
+          <button class="logout-btn" id="topbarLogoutBtn" onclick="handleLogout()">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-pane="visao">Visão geral</button>
+          <button class="tab" data-pane="transacoes">Transações</button>
+          <button class="tab" data-pane="fixos">Gastos fixos</button>
+          <button class="tab hidden" id="tabEvento" data-pane="evento">Evento Selecionado</button>
+        </div>
+      </div>
+
+      <div class="content" id="mainContent">
+        <div id="pane-visao" class="pane-view active">
+          <div class="summary-grid" id="summaryGrid"></div>
+          <div class="section">
+            <div class="section-header">
+              <span class="section-title">Categorias</span>
+            </div>
+            <div class="cat-tabs">
+              <button class="cat-subtab active" data-catpane="expenses">Gastos variáveis</button>
+              <button class="cat-subtab" data-catpane="entries">Entradas</button>
+              <button class="cat-subtab" data-catpane="fixed">Gastos fixos</button>
+            </div>
+            <div class="cat-subpane active" id="cat-pane-expenses"><div id="catChartExpenses"></div></div>
+            <div class="cat-subpane" id="cat-pane-entries"><div id="catChartEntries"></div></div>
+            <div class="cat-subpane" id="cat-pane-fixed"><div id="catChartFixed"></div></div>
+          </div>
+          <div class="section">
+            <div class="section-header"><span class="section-title">Últimas transações</span></div>
+            <table><thead><tr><th>Descrição</th><th>Categoria</th><th>Valor</th></tr></thead>
+            <tbody id="recentTbody"></tbody></table>
+          </div>
+        </div>
+
+        <div id="pane-transacoes" class="pane-view">
+          <div class="section">
+            <div class="section-header">
+              <span class="section-title">Todas as transações</span>
+              <button class="add-btn" id="addTransBtn">+ Adicionar</button>
+            </div>
+            <table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th>Valor</th><th></th></tr></thead>
+            <tbody id="transTbody"></tbody></table>
+          </div>
+        </div>
+
+        <div id="pane-fixos" class="pane-view">
+          <div class="section">
+            <div class="section-header">
+              <span class="section-title">Gastos fixos mensais</span>
+              <button class="add-btn" id="addFixoBtn">+ Adicionar</button>
+            </div>
+            <table><thead><tr><th>Descrição</th><th>Categoria</th><th>Dia venc.</th><th>Valor</th><th></th></tr></thead>
+            <tbody id="fixoTbody"></tbody></table>
+          </div>
+        </div>
+
+        <div id="pane-evento" class="pane-view">
+          <div class="summary-grid" id="evtSummaryGrid"></div>
+          <div class="section">
+            <div class="section-header">
+              <span class="section-title" id="evtExpensesTitle">Gastos do Evento</span>
+              <button class="add-btn" id="addEvtExpBtn">+ Adicionar Gasto</button>
+            </div>
+            <table>
+              <thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th></th></tr></thead>
+              <tbody id="evtExpTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modalOverlay"></div>
+
+<script type="module">
+  // --- 1. IMPORTAÇÕES FIREBASE ---
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+  // --- 2. CONFIGURAÇÃO FIREBASE ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDrM-SLC48LHS3KwJjCe0DOIBHLrCggqcg",
+    authDomain: "financeiro-familia-44fac.firebaseapp.com",
+    projectId: "financeiro-familia-44fac",
+    storageBucket: "financeiro-familia-44fac.firebasestorage.app",
+    messagingSenderId: "80711008078",
+    appId: "1:80711008078:web:09b87095ec880c2bbde81f",
+    measurementId: "G-LRQJCHV4B6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // Variáveis Globais de Estado
+  let currentUser = null;
+  let currentFamilyId = null; 
+  let isVisitor = false;
+  let unsubscribers = []; 
+
+  const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  let CATS = [
+    {name:'Alimentação',color:'#1D9E75'}, {name:'Transporte',color:'#378ADD'},
+    {name:'Moradia',color:'#534AB7'}, {name:'Saúde',color:'#D85A30'},
+    {name:'Lazer',color:'#D4537E'}, {name:'Educação',color:'#BA7517'},
+    {name:'Outros',color:'#888780'},
+  ];
+  let curMonth=3, curYear=2026;
+  let transactions=[], fixos=[], events=[], eventExpenses=[];
+  let selEvt=null, modal={type:null,editId:null}, activeCategoryPane='expenses';
+
+  // --- 3. LÓGICA DE AUTENTICAÇÃO E TELAS ---
+
+  window.toggleAuthView = function(view) {
+    document.getElementById('authError').innerText = "";
+    document.getElementById('signupError').innerText = "";
+    document.getElementById('loginSuccessMsg').innerText = "";
+    
+    if(view === 'signup') {
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('signupBox').classList.remove('hidden');
+    } else {
+      document.getElementById('signupBox').classList.add('hidden');
+      document.getElementById('loginBox').classList.remove('hidden');
+    }
+  }
+
+  function clearData() {
+    transactions=[]; fixos=[]; events=[]; eventExpenses=[];
+    unsubscribers.forEach(unsub => unsub()); 
+    unsubscribers = [];
+    renderAll();
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      isVisitor = false;
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      document.getElementById('visitorBadge').classList.add('hidden');
+      document.getElementById('topbarLogoutBtn').innerText = "Sair"; 
+      
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if(userDoc.exists()) {
+          const data = userDoc.data();
+          if(data.theme === 'dark') document.body.classList.add('dark-theme');
+          else document.body.classList.remove('dark-theme');
+          
+          currentFamilyId = data.familyId || user.uid; 
+          
+          // Exibe o nome do usuário logado
+          if(data.username) {
+            document.getElementById('userNameDisplay').innerText = `| Olá, ${data.username}`;
+          }
+        } else {
+          document.body.classList.remove('dark-theme');
+          currentFamilyId = user.uid; 
+          document.getElementById('userNameDisplay').innerText = "";
+        }
+      } catch(e){
+        currentFamilyId = user.uid;
+      }
+
+      setupRealtimeListeners(currentFamilyId);
+    } else {
+      currentUser = null;
+      currentFamilyId = null;
+      if (!isVisitor) { 
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('app').classList.add('hidden');
+        clearData();
+      }
+    }
+  });
+
+  window.handleLogin = async function() {
+    const e = document.getElementById('authEmail').value;
+    const p = document.getElementById('authPassword').value;
+    try { 
+      await signInWithEmailAndPassword(auth, e, p); 
+      document.getElementById('authError').innerText = ""; 
+    } catch (error) { 
+      document.getElementById('authError').innerText = "Erro ao entrar. Verifique email e senha."; 
+    }
+  }
+
+  window.executeSignup = async function() {
+    const user = document.getElementById('regUser').value;
+    const email = document.getElementById('regEmail').value;
+    const pass = document.getElementById('regPass').value;
+    const passConfirm = document.getElementById('regPassConfirm').value;
+    const themePref = document.getElementById('regTheme').value;
+
+    if(!user || !email || !pass) { document.getElementById('signupError').innerText = "Preencha todos os campos."; return; }
+    if(pass !== passConfirm) { document.getElementById('signupError').innerText = "As senhas não são iguais."; return; }
+    if(pass.length < 6) { document.getElementById('signupError').innerText = "A senha deve ter no mínimo 6 caracteres."; return; }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      const newUser = userCredential.user;
+      
+      await setDoc(doc(db, "users", newUser.uid), {
+        userId: newUser.uid,
+        familyId: newUser.uid, 
+        username: user,
+        theme: themePref,
+        createdAt: new Date().toISOString()
+      });
+
+      await signOut(auth);
+      toggleAuthView('login');
+      
+      document.getElementById('authEmail').value = email; 
+      document.getElementById('authPassword').value = "";
+      document.getElementById('loginSuccessMsg').innerText = "Conta criada com sucesso! Faça login.";
+
+    } catch (error) { 
+      if(error.code === 'auth/email-already-in-use') {
+        document.getElementById('signupError').innerText = "Este e-mail já está sendo usado.";
+      } else {
+        document.getElementById('signupError').innerText = "Erro ao criar conta. Tente novamente."; 
+      }
+    }
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', async () => { 
+    const isDark = document.body.classList.toggle('dark-theme'); 
+    if(currentUser && !isVisitor) {
+      try { 
+        await setDoc(doc(db, "users", currentUser.uid), { 
+          theme: isDark ? 'dark' : 'light'
+        }, { merge: true }); 
+      } catch(e){}
+    }
+  });
+
+  window.handleLogout = function() {
+    if (isVisitor) {
+      isVisitor = false;
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.getElementById('app').classList.add('hidden');
+      clearData();
+      return;
+    }
+    signOut(auth);
+  }
+
+  window.enterAsVisitor = function() {
+    isVisitor = true;
+    currentUser = null;
+    currentFamilyId = 'visitor-local';
+    document.body.classList.remove('dark-theme'); 
+    clearData(); 
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('visitorBadge').classList.remove('hidden');
+    document.getElementById('userNameDisplay').innerText = ""; // Limpa o nome para o visitante
+    document.getElementById('topbarLogoutBtn').innerText = "Fazer Login";
+  }
+
+  // --- 4. COMUNICAÇÃO COM O BANCO DE DADOS (VIA FAMILY ID) ---
+
+  function setupRealtimeListeners(fId) {
+    clearData();
+    const qTrans = query(collection(db, "transactions"), where("familyId", "==", fId));
+    const qFixos = query(collection(db, "fixos"), where("familyId", "==", fId));
+    const qEvents = query(collection(db, "events"), where("familyId", "==", fId));
+    const qExps = query(collection(db, "eventExpenses"), where("familyId", "==", fId));
+
+    unsubscribers.push(onSnapshot(qTrans, (snap) => { transactions = snap.docs.map(d => ({id: d.id, ...d.data()})); renderAll(); }));
+    unsubscribers.push(onSnapshot(qFixos, (snap) => { fixos = snap.docs.map(d => ({id: d.id, ...d.data()})); renderAll(); }));
+    unsubscribers.push(onSnapshot(qEvents, (snap) => { events = snap.docs.map(d => ({id: d.id, ...d.data()})); renderAll(); }));
+    unsubscribers.push(onSnapshot(qExps, (snap) => { eventExpenses = snap.docs.map(d => ({id: d.id, ...d.data()})); renderAll(); }));
+  }
+
+  function generateId() { 
+    return Date.now().toString() + Math.random().toString(36).substr(2, 5); 
+  }
+
+  window.saveTrans = async function() {
+    const d = { 
+      date: document.getElementById('f_date').value, 
+      desc: document.getElementById('f_desc').value, 
+      cat: document.getElementById('f_cat').value, 
+      tipo: document.getElementById('f_tipo').value, 
+      sub: document.getElementById('f_sub').value, 
+      valor: parseFloat(document.getElementById('f_valor').value)||0 
+    };
+
+    if(isVisitor) { 
+      if(modal.editId) { 
+        const i = transactions.findIndex(x => x.id === modal.editId); transactions[i] = {...transactions[i], ...d}; 
+      } else { transactions.push({id: generateId(), ...d}); } 
+      closeModal(); renderAll(); return; 
+    }
+
+    d.familyId = currentFamilyId; 
+    d.authorId = currentUser.uid; 
+    
+    if(modal.editId) await updateDoc(doc(db, "transactions", modal.editId), d); 
+    else await addDoc(collection(db, "transactions"), d);
+    closeModal();
+  };
+
+  window.saveFixo = async function() {
+    const d = { 
+      desc: document.getElementById('ff_desc').value, 
+      cat: document.getElementById('ff_cat').value, 
+      dia: parseInt(document.getElementById('ff_dia').value)||1, 
+      valor: parseFloat(document.getElementById('ff_valor').value)||0 
+    };
+
+    if(isVisitor) { 
+      if(modal.editId) { const i = fixos.findIndex(x => x.id === modal.editId); fixos[i] = {...fixos[i], ...d}; 
+      } else { fixos.push({id: generateId(), ...d}); } 
+      closeModal(); renderAll(); return; 
+    }
+
+    d.familyId = currentFamilyId;
+    
+    if(modal.editId) await updateDoc(doc(db, "fixos", modal.editId), d); 
+    else await addDoc(collection(db, "fixos"), d);
+    closeModal();
+  };
+
+  window.saveEvt = async function() {
+    const d = { 
+      name: document.getElementById('fe_name').value, 
+      date: document.getElementById('fe_date').value, 
+      valor: parseFloat(document.getElementById('fe_valor').value)||0, 
+      notas: document.getElementById('fe_notas').value 
+    };
+
+    if(isVisitor) { 
+      if(modal.editId) { const i = events.findIndex(x => x.id === modal.editId); events[i] = {...events[i], ...d}; 
+      } else { const id = generateId(); events.push({id: id, ...d}); selEvt = id; } 
+      closeModal(); document.getElementById('tabEvento').classList.remove('hidden'); document.getElementById('tabEvento').click(); renderAll(); return; 
+    }
+
+    d.familyId = currentFamilyId;
+    
+    if(modal.editId) { await updateDoc(doc(db, "events", modal.editId), d); } 
+    else { const novoEvt = await addDoc(collection(db, "events"), d); selEvt = novoEvt.id; }
+    
+    closeModal(); document.getElementById('tabEvento').classList.remove('hidden'); document.getElementById('tabEvento').click();
+  };
+
+  window.saveEvtExp = async function() {
+    if(!selEvt) return; 
+    const d = { 
+      eventId: selEvt, 
+      date: document.getElementById('fex_date').value, 
+      desc: document.getElementById('fex_desc').value, 
+      valor: parseFloat(document.getElementById('fex_valor').value)||0 
+    };
+
+    if(isVisitor) { 
+      if(modal.editId) { const i = eventExpenses.findIndex(x => x.id === modal.editId); eventExpenses[i] = {...eventExpenses[i], ...d}; 
+      } else { eventExpenses.push({id: generateId(), ...d}); } 
+      closeModal(); renderEventoPane(); return; 
+    }
+
+    d.familyId = currentFamilyId;
+    if(modal.editId) await updateDoc(doc(db, "eventExpenses", modal.editId), d); 
+    else await addDoc(collection(db, "eventExpenses"), d);
+    closeModal();
+  };
+
+  window.delTrans = async function(id) { 
+    if(!confirm('Excluir transação?')) return; 
+    if(isVisitor) { transactions = transactions.filter(x => x.id !== id); renderAll(); return; } 
+    await deleteDoc(doc(db, "transactions", id)); 
+  };
+  window.delFixo = async function(id) { 
+    if(!confirm('Excluir gasto fixo?')) return; 
+    if(isVisitor) { fixos = fixos.filter(x => x.id !== id); renderAll(); return; } 
+    await deleteDoc(doc(db, "fixos", id)); 
+  };
+  window.delEvt = async function(id) { 
+    event.stopPropagation(); 
+    if(!confirm('Excluir evento e todos os gastos vinculados?')) return; 
+    if(isVisitor) { 
+      events = events.filter(x => x.id !== id); eventExpenses = eventExpenses.filter(x => x.eventId !== id); 
+      if(selEvt === id) { selEvt = null; document.getElementById('tabEvento').classList.add('hidden'); document.querySelector('.tab[data-pane="visao"]').click(); } 
+      renderAll(); return; 
+    } 
+    await deleteDoc(doc(db, "events", id)); 
+    const expToDelete = eventExpenses.filter(x => x.eventId === id); 
+    for(let exp of expToDelete) { await deleteDoc(doc(db, "eventExpenses", exp.id)); }
+    if(selEvt === id) { selEvt = null; document.getElementById('tabEvento').classList.add('hidden'); document.querySelector('.tab[data-pane="visao"]').click(); } 
+  };
+  window.delEvtExp = async function(id) { 
+    if(!confirm('Excluir este gasto?')) return; 
+    if(isVisitor) { eventExpenses = eventExpenses.filter(x => x.id !== id); renderEventoPane(); return; } 
+    await deleteDoc(doc(db, "eventExpenses", id)); 
+  };
+
+  // --- 5. LÓGICA DE VISUALIZAÇÃO E CÁLCULOS ---
+
+  function findCategoryByName(name){ return CATS.find(c => c.name.toLowerCase() === String(name || '').trim().toLowerCase()); }
+  function fmt(v){return 'R$ ' + parseFloat(v).toFixed(2).replace('.',',')}
+  function fmtDate(d){ if(!d) return ''; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
+
+  function monthTrans(){ return transactions.filter(t => t.date && t.date.startsWith(`${curYear}-${String(curMonth+1).padStart(2,'0')}`)); }
+  function getProjectedFixedTransactions(){ const monthPrefix = `${curYear}-${String(curMonth+1).padStart(2,'0')}`; return fixos.filter(f => !transactions.some(t => t.date && t.date.startsWith(monthPrefix) && t.sub === 'fixo' && t.tipo === 'saida' && t.desc.trim().toLowerCase() === f.desc.trim().toLowerCase() && Number(t.valor) === Number(f.valor))).map(f => ({ id: `fixo-${f.id}`, date: `${monthPrefix}-${String(Math.min(f.dia, 28)).padStart(2,'0')}`, desc: f.desc, cat: f.cat, tipo: 'saida', sub: 'fixo', valor: Number(f.valor), projected: true })); }
+  function getMonthFinancialEntries(){ return [...monthTrans(), ...getProjectedFixedTransactions()].sort((a,b) => a.date.localeCompare(b.date)); }
+
+  function renderSummary() { 
+    const ts = getMonthFinancialEntries(); 
+    const entradas = ts.filter(t => t.tipo === 'entrada').reduce((a,t) => a + t.valor, 0); 
+    const saidas = ts.filter(t => t.tipo === 'saida').reduce((a,t) => a + t.valor, 0); 
+    const saldo = entradas - saidas; 
+    const fixosTotal = ts.filter(t => t.tipo === 'saida' && t.sub === 'fixo').reduce((a,t) => a + t.valor, 0); 
+    
+    document.getElementById('summaryGrid').innerHTML = `
+      <div class="metric-card"><div class="metric-label">Entradas</div><div class="metric-value green">${fmt(entradas)}</div></div>
+      <div class="metric-card"><div class="metric-label">Saídas</div><div class="metric-value red">${fmt(saidas)}</div></div>
+      <div class="metric-card"><div class="metric-label">Saldo</div><div class="metric-value ${saldo >= 0 ? 'green' : 'red'}">${fmt(saldo)}</div></div>
+      <div class="metric-card"><div class="metric-label">Gastos fixos</div><div class="metric-value blue">${fmt(fixosTotal)}</div></div>
+    `; 
+  }
+
+  function renderCategoryBlock(elementId, items, emptyText) { 
+    const total = items.reduce((a,t) => a + t.valor, 0) || 1; 
+    const bycat = {}; CATS.forEach(c => { bycat[c.name] = 0 }); 
+    items.forEach(t => { if(bycat[t.cat] !== undefined) bycat[t.cat] += t.valor }); 
+    const sorted = CATS.filter(c => bycat[c.name] > 0); 
+    const el = document.getElementById(elementId); 
+    el.innerHTML = sorted.map(c => `<div class="cat-row"><span class="cat-name">${c.name}</span><div class="bar-wrap"><div class="bar-fill" style="width:${(bycat[c.name]/total*100).toFixed(1)}%;background:${c.color}"></div></div><span class="cat-val">${fmt(bycat[c.name])}</span></div>`).join(''); 
+    if (sorted.length === 0) el.innerHTML = `<span style="font-size:13px;color:var(--color-text-secondary)">${emptyText}</span>`; 
+  }
+
+  function renderCatChart() { 
+    const monthEntries = getMonthFinancialEntries(); 
+    renderCategoryBlock('catChartExpenses', monthEntries.filter(t => t.tipo === 'saida' && t.sub === 'variavel'), 'Nenhum gasto variável.'); 
+    renderCategoryBlock('catChartEntries', monthEntries.filter(t => t.tipo === 'entrada'), 'Nenhuma entrada.'); 
+    renderCategoryBlock('catChartFixed', [...monthEntries.filter(t => t.tipo === 'saida' && t.sub === 'fixo' && !t.projected), ...getProjectedFixedTransactions()], 'Nenhum gasto fixo.'); 
+  }
+
+  function renderRecent() { 
+    const ts = getMonthFinancialEntries().slice(-5).reverse(); 
+    document.getElementById('recentTbody').innerHTML = ts.map(t => { 
+      const c = findCategoryByName(t.cat); 
+      return `<tr><td>${t.desc}${t.projected ? ' <span class="chip">Previsto</span>' : ''}</td><td><span class="cat-tag"><span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${t.cat}</span></td><td style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500">${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}</td></tr>`;
+    }).join(''); 
+  }
+
+  function renderTrans() { 
+    document.getElementById('transTbody').innerHTML = monthTrans().map(t => { 
+      const c = findCategoryByName(t.cat); 
+      return `<tr><td>${fmtDate(t.date)}</td><td>${t.desc}</td><td><span class="cat-tag"><span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${t.cat}</span></td><td><span class="badge badge-${t.tipo === 'entrada' ? 'entrada' : 'saida'}">${t.tipo === 'entrada' ? 'Entrada' : 'Saída'}</span><span class="badge badge-${t.sub}" style="margin-left:4px">${t.sub === 'fixo' ? 'Fixo' : 'Variável'}</span></td><td style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500">${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}</td><td><div class="actions"><button class="icon-btn" onclick="editTrans('${t.id}')">✎</button><button class="icon-btn" onclick="delTrans('${t.id}')">✕</button></div></td></tr>`;
+    }).join(''); 
+  }
+
+  function renderFixos() { 
+    document.getElementById('fixoTbody').innerHTML = fixos.map(f => { 
+      const c = findCategoryByName(f.cat); 
+      return `<tr><td>${f.desc}</td><td><span class="cat-tag"><span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${f.cat}</span></td><td>Dia ${f.dia}</td><td style="font-weight:500">${fmt(f.valor)}</td><td><div class="actions"><button class="icon-btn" onclick="editFixo('${f.id}')">✎</button><button class="icon-btn" onclick="delFixo('${f.id}')">✕</button></div></td></tr>`;
+    }).join(''); 
+  }
+
+  function renderEvents() { 
+    const el = document.getElementById('evtList'); 
+    if(document.getElementById('sidebar').classList.contains('collapsed')) { el.innerHTML = ''; return; } 
+    el.innerHTML = events.map(e => `<div class="evt-item${selEvt === e.id ? ' selected' : ''}" onclick="selectEvt('${e.id}')"><div class="evt-name">${e.name}</div><div class="evt-meta"><span>${fmtDate(e.date)}</span><span>${fmt(e.valor)}</span></div></div>${selEvt === e.id ? `<div class="evt-detail"><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">${e.notas || 'Sem notas'}</div><div style="display:flex;gap:6px"><button class="add-btn" onclick="editEvt('${e.id}')">✎ Editar</button><button class="add-btn" style="color:#E24B4A" onclick="delEvt('${e.id}')">✕ Excluir</button></div></div>` : ''}`).join(''); 
+  }
+
+  function renderEventoPane() { 
+    if(!selEvt) return; const e = events.find(x => x.id === selEvt); if(!e) return; 
+    document.getElementById('tabEvento').textContent = `Evento: ${e.name}`; document.getElementById('evtExpensesTitle').textContent = `Gastos - ${e.name}`; 
+    const evExps = eventExpenses.filter(x => x.eventId === selEvt); const totalGasto = evExps.reduce((a,x) => a + x.valor, 0); const restante = e.valor - totalGasto; 
+    document.getElementById('evtSummaryGrid').innerHTML = `<div class="metric-card"><div class="metric-label">Orçamento Estimado</div><div class="metric-value blue">${fmt(e.valor)}</div></div><div class="metric-card"><div class="metric-label">Total Gasto</div><div class="metric-value red">${fmt(totalGasto)}</div></div><div class="metric-card"><div class="metric-label">Saldo</div><div class="metric-value ${restante >= 0 ? 'green' : 'orange'}">${fmt(restante)}</div></div>`; 
+    document.getElementById('evtExpTbody').innerHTML = evExps.map(x => `<tr><td>${fmtDate(x.date)}</td><td>${x.desc}</td><td style="color:#E24B4A;font-weight:500">-${fmt(x.valor)}</td><td><div class="actions"><button class="icon-btn" onclick="editEvtExp('${x.id}')">✎</button><button class="icon-btn" onclick="delEvtExp('${x.id}')">✕</button></div></td></tr>`).join(''); 
+  }
+
+  function renderAll() { 
+    document.getElementById('monthLabel').textContent = `${MONTHS[curMonth]} ${curYear}`; 
+    renderSummary(); renderCatChart(); renderRecent(); renderTrans(); renderFixos(); renderEvents(); if(selEvt) renderEventoPane(); 
+  }
+
+  function transForm(t) { return `<div class="two-col"><div class="form-row"><label>Data</label><input type="date" id="f_date" value="${t ? t.date : new Date().toISOString().split('T')[0]}"></div><div class="form-row"><label>Valor (R$)</label><input type="number" id="f_valor" step="0.01" value="${t ? t.valor : ''}"></div></div><div class="form-row"><label>Descrição</label><input type="text" id="f_desc" value="${t ? t.desc : ''}"></div><div class="two-col"><div class="form-row"><label>Categoria</label><select id="f_cat">${CATS.map(c => `<option value="${c.name}"${t && t.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}</select></div><div class="form-row"><label>Tipo</label><select id="f_tipo"><option value="saida"${!t || t.tipo === 'saida' ? ' selected' : ''}>Saída</option><option value="entrada"${t && t.tipo === 'entrada' ? ' selected' : ''}>Entrada</option></select></div></div><div class="form-row"><label>Subtipo</label><select id="f_sub"><option value="variavel"${!t || t.sub === 'variavel' ? ' selected' : ''}>Variável</option><option value="fixo"${t && t.sub === 'fixo' ? ' selected' : ''}>Fixo</option></select></div><div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-save" onclick="saveTrans()">Salvar</button></div>`; }
+  function fixoForm(f) { return `<div class="form-row"><label>Descrição</label><input type="text" id="ff_desc" value="${f ? f.desc : ''}"></div><div class="two-col"><div class="form-row"><label>Categoria</label><select id="ff_cat">${CATS.map(c => `<option value="${c.name}"${f && f.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}</select></div><div class="form-row"><label>Dia vencimento</label><input type="number" id="ff_dia" min="1" max="31" value="${f ? f.dia : ''}"></div></div><div class="form-row"><label>Valor (R$)</label><input type="number" id="ff_valor" step="0.01" value="${f ? f.valor : ''}"></div><div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-save" onclick="saveFixo()">Salvar</button></div>`; }
+  function evtForm(e) { return `<div class="form-row"><label>Nome do evento</label><input type="text" id="fe_name" value="${e ? e.name : ''}"></div><div class="two-col"><div class="form-row"><label>Data</label><input type="date" id="fe_date" value="${e ? e.date : new Date().toISOString().split('T')[0]}"></div><div class="form-row"><label>Orçamento (R$)</label><input type="number" id="fe_valor" step="0.01" value="${e ? e.valor : ''}"></div></div><div class="form-row"><label>Notas</label><textarea id="fe_notas">${e ? e.notas : ''}</textarea></div><div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-save" onclick="saveEvt()">Salvar</button></div>`; }
+  function evtExpForm(x) { return `<div class="two-col"><div class="form-row"><label>Data</label><input type="date" id="fex_date" value="${x ? x.date : new Date().toISOString().split('T')[0]}"></div><div class="form-row"><label>Valor (R$)</label><input type="number" id="fex_valor" step="0.01" value="${x ? x.valor : ''}"></div></div><div class="form-row"><label>Descrição</label><input type="text" id="fex_desc" value="${x ? x.desc : ''}"></div><div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-save" onclick="saveEvtExp()">Salvar</button></div>`; }
+
+  window.editTrans = function(id) { modal = {type:'trans', editId:id}; showModal(transForm(transactions.find(x => x.id === id)), 'Editar transação'); }; window.editFixo = function(id) { modal = {type:'fixo', editId:id}; showModal(fixoForm(fixos.find(x => x.id === id)), 'Editar gasto fixo'); }; window.editEvt = function(id) { event.stopPropagation(); modal = {type:'evt', editId:id}; showModal(evtForm(events.find(x => x.id === id)), 'Editar evento'); }; window.editEvtExp = function(id) { modal = {type:'evtExp', editId:id}; showModal(evtExpForm(eventExpenses.find(x => x.id === id)), 'Editar gasto'); };
+  window.selectEvt = function(id) { const tab = document.getElementById('tabEvento'); if(selEvt === id) { selEvt = null; tab.classList.add('hidden'); document.querySelector('.tab[data-pane="visao"]').click(); } else { selEvt = id; tab.classList.remove('hidden'); tab.click(); } renderEvents(); if(selEvt) renderEventoPane(); };
+  window.showModal = function(html, title) { const ov = document.getElementById('modalOverlay'); ov.innerHTML = `<div class="modal"><h3>${title}</h3>${html}</div>`; ov.classList.remove('hidden'); };
+  window.closeModal = function() { document.getElementById('modalOverlay').classList.add('hidden'); };
+
+  document.getElementById('toggleSidebar').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('collapsed'); renderEvents(); }); 
+  document.getElementById('prevMonth').addEventListener('click', () => { curMonth--; if(curMonth < 0){curMonth = 11; curYear--} renderAll(); }); 
+  document.getElementById('nextMonth').addEventListener('click', () => { curMonth++; if(curMonth > 11){curMonth = 0; curYear++} renderAll(); }); 
+  
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', function() { 
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); this.classList.add('active'); 
+    document.querySelectorAll('.pane-view').forEach(p => p.classList.remove('active')); document.getElementById('pane-' + this.dataset.pane).classList.add('active'); 
+  }));
+  
+  document.getElementById('addTransBtn').addEventListener('click', () => { modal = {type:'trans', editId:null}; showModal(transForm(null), 'Nova transação'); }); 
+  document.getElementById('addFixoBtn').addEventListener('click', () => { modal = {type:'fixo', editId:null}; showModal(fixoForm(null), 'Novo gasto fixo'); }); 
+  document.getElementById('addEvtBtn').addEventListener('click', (event) => { event.stopPropagation(); modal = {type:'evt', editId:null}; showModal(evtForm(null), 'Novo evento'); }); 
+  document.getElementById('addEvtExpBtn').addEventListener('click', () => { modal = {type:'evtExp', editId:null}; showModal(evtExpForm(null), 'Adicionar gasto ao evento'); }); 
+  
+  document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target === e.currentTarget) closeModal(); }); 
+  
+  document.querySelectorAll('.cat-subtab').forEach(btn => btn.addEventListener('click', function() { 
+    activeCategoryPane = this.dataset.catpane; 
+    document.querySelectorAll('.cat-subtab').forEach(b => b.classList.toggle('active', b.dataset.catpane === activeCategoryPane)); 
+    document.querySelectorAll('.cat-subpane').forEach(el => el.classList.toggle('active', el.id === `cat-pane-${activeCategoryPane}`)); 
+  }));
+
+</script>
+</body>
+</html>
