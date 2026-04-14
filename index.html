@@ -317,7 +317,7 @@
         }
 
         /* =========================================
-           TAGS, BADGES E CORES DE CATEGORIA
+           TAGS E BADGES
            ========================================= */
         .badge {
             display: inline-block;
@@ -336,7 +336,7 @@
         body.dark-theme .badge-variavel { background: rgba(133,79,11,0.2); color: #fde68a; } 
         body.dark-theme .badge-entrada { background: rgba(59,109,17,0.2); color: #a7f3d0; } 
         body.dark-theme .badge-saida { background: rgba(163,45,45,0.2); color: #fca5a5; }
-
+        
         .cat-dot {
             display: inline-block;
             width: 8px;
@@ -439,13 +439,8 @@
             border-color: var(--color-border-active);
         }
         
-        .cat-subpane {
-            display: none;
-        } 
-        
-        .cat-subpane.active {
-            display: block;
-        }
+        .cat-subpane { display: none; } 
+        .cat-subpane.active { display: block; }
 
         .cat-row {
             display: flex;
@@ -455,16 +450,8 @@
             font-size: 13px;
         }
         
-        .cat-name {
-            min-width: 90px;
-            color: var(--color-text-secondary);
-        } 
-        
-        .cat-val {
-            min-width: 70px;
-            text-align: right;
-            color: var(--color-text-primary);
-        }
+        .cat-name { min-width: 90px; color: var(--color-text-secondary); } 
+        .cat-val { min-width: 70px; text-align: right; color: var(--color-text-primary); }
 
         .bar-wrap {
             height: 8px;
@@ -478,6 +465,33 @@
             height: 100%;
             border-radius: 4px;
             transition: width 0.3s;
+        }
+
+        /* =========================================
+           GERENCIADOR DE CATEGORIAS (LISTA NO MODAL)
+           ========================================= */
+        .cat-manage-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            max-height: 260px; 
+            overflow: auto; 
+        }
+        .cat-manage-item { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 10px; 
+            padding: 8px 10px; 
+            border: 0.5px solid var(--color-border-tertiary); 
+            border-radius: 6px; 
+            background: var(--color-background-secondary); 
+        }
+        .cat-manage-name { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 13px; 
         }
 
         /* =========================================
@@ -593,6 +607,8 @@
             margin-bottom: 10px;
         }
         
+        .auth-btn-primary:hover { opacity: 0.9; }
+        
         .auth-btn-secondary { 
             width: 100%; 
             background: transparent; 
@@ -605,7 +621,12 @@
             margin-bottom: 10px;
         }
 
-        .auth-btn-visitor {
+        .auth-btn-secondary:hover { 
+            background: var(--color-hover); 
+            color: var(--color-text-primary); 
+        }
+        
+        .auth-btn-visitor { 
             color: #0ea5e9; 
             background: none; 
             border: none; 
@@ -772,6 +793,7 @@
                 position: fixed; 
                 transform: translateX(-100%); 
                 height: 100%; 
+                width: 260px; 
                 box-shadow: 2px 0 10px rgba(0,0,0,0.1); 
             }
             .sidebar.active { transform: translateX(0); }
@@ -915,7 +937,11 @@
                     
                     <div class="section">
                         <div class="section-header">
-                            <span class="section-title">Categorias</span>
+                            <span class="section-title">Categorias do Mês</span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="add-btn" onclick="addNewCategory()">+ Categoria</button>
+                                <button class="add-btn" onclick="openCategoryManager()">Gerenciar</button>
+                            </div>
                         </div>
                         <div class="cat-tabs">
                             <button class="cat-subtab active" data-catpane="expenses">Gastos variáveis</button>
@@ -1033,16 +1059,10 @@
     let unsubscribers = []; 
 
     const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    const CAT_COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F43F5E', '#06B6D4'];
     
-    let CATS = [
-        {name:'Alimentação', color:'#1D9E75'}, 
-        {name:'Transporte', color:'#378ADD'},
-        {name:'Moradia', color:'#534AB7'}, 
-        {name:'Saúde', color:'#D85A30'},
-        {name:'Lazer', color:'#D4537E'}, 
-        {name:'Educação', color:'#BA7517'},
-        {name:'Outros', color:'#888780'}
-    ];
+    // Categorias controladas dinamicamente
+    let CATS = [];
     
     let curMonth = new Date().getMonth();
     let curYear = new Date().getFullYear();
@@ -1055,6 +1075,139 @@
     let selEvt = null;
     let modal = { type: null, editId: null };
     let activeCategoryPane = 'expenses';
+
+
+    // ==========================================
+    // SISTEMA DE CATEGORIAS DINÂMICAS
+    // ==========================================
+    function normalizeCategoryName(name) { 
+        return (name || '').trim().toLowerCase().split(/\s+/).filter(Boolean).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '); 
+    }
+    
+    function findCategoryByName(name) { 
+        return CATS.find(c => c.name.toLowerCase() === String(name || '').trim().toLowerCase()); 
+    }
+    
+    function getSortedCats() {
+        const others = CATS.filter(c => c.name.toLowerCase() === 'outros');
+        const othersNot = CATS.filter(c => c.name.toLowerCase() !== 'outros').sort((a, b) => a.name.localeCompare(b.name));
+        return [...othersNot, ...others];
+    }
+
+    async function saveCatsToDB(newCats) {
+        CATS = newCats;
+        renderAll();
+        if (!isVisitor) {
+            try { await setDoc(doc(db, "familySettings", currentFamilyId), { categories: newCats }, { merge: true }); } catch (e) {}
+        }
+    }
+
+    window.addNewCategory = function() {
+        const rawName = prompt("Qual o nome da nova categoria?");
+        const normalized = normalizeCategoryName(rawName);
+        
+        if (!normalized) return '';
+        if (findCategoryByName(normalized)) { 
+            alert("Esta categoria já existe!"); 
+            return findCategoryByName(normalized).name; 
+        }
+        
+        const color = CAT_COLORS[CATS.length % CAT_COLORS.length];
+        const newCats = [...CATS, { name: normalized, color }];
+        
+        saveCatsToDB(newCats);
+        return normalized;
+    }
+
+    window.openCategoryManager = function() {
+        const reservedOther = 'Outros';
+        const rows = getSortedCats().map(c => `
+            <div class="cat-manage-item">
+                <div class="cat-manage-name"><span class="cat-dot" style="background:${c.color}"></span>${c.name}</div>
+                <div class="actions">
+                    <button class="icon-btn" onclick="renameCategory('${c.name.replace(/'/g, "\\'")}')" title="Renomear">✎</button>
+                    <button class="icon-btn" ${c.name === reservedOther ? 'disabled style="opacity:.35;cursor:not-allowed"' : ''} onclick="${c.name === reservedOther ? '' : `removeCategory('${c.name.replace(/'/g, "\\'")}')`}" title="Excluir">✕</button>
+                </div>
+            </div>
+        `).join('');
+        
+        showModal(`
+            <div class="cat-manage-list">
+                ${rows || '<div style="font-size:13px;color:var(--color-text-secondary)">Nenhuma categoria cadastrada.</div>'}
+            </div>
+            <div class="form-actions">
+                <button class="btn-cancel" onclick="closeModal()">Fechar</button>
+            </div>
+        `, 'Gerenciar Categorias');
+    }
+
+    window.renameCategory = async function(oldName) {
+        const raw = prompt("Novo nome da categoria:", oldName);
+        const normalized = normalizeCategoryName(raw);
+        
+        if (!normalized || normalized === oldName) return;
+        if (findCategoryByName(normalized)) { 
+            alert("Já existe uma categoria com esse nome."); 
+            return; 
+        }
+        
+        const newCats = [...CATS];
+        const idx = newCats.findIndex(c => c.name === oldName);
+        if (idx === -1) return;
+        
+        newCats[idx] = { ...newCats[idx], name: normalized };
+        
+        // Atualiza todas as transações vinculadas a este nome
+        if (!isVisitor) {
+             transactions.forEach(t => { if(t.cat === oldName) updateDoc(doc(db, "transactions", t.id), {cat: normalized}); });
+             fixos.forEach(f => { if(f.cat === oldName) updateDoc(doc(db, "fixos", f.id), {cat: normalized}); });
+        } else {
+             transactions = transactions.map(t => t.cat === oldName ? {...t, cat:normalized} : t);
+             fixos = fixos.map(f => f.cat === oldName ? {...f, cat:normalized} : f);
+        }
+        
+        await saveCatsToDB(newCats);
+        openCategoryManager();
+    }
+
+    window.removeCategory = async function(name) {
+        if (name === 'Outros') { 
+            alert('A categoria "Outros" não pode ser apagada, pois é a categoria padrão.'); 
+            return; 
+        }
+        
+        const usageCount = transactions.filter(t => t.cat === name).length + fixos.filter(f => f.cat === name).length;
+        const msg = usageCount > 0
+            ? `Apagar a categoria "${name}"? Os itens vinculados serão movidos automaticamente para a categoria "Outros".`
+            : `Tem certeza que deseja apagar a categoria "${name}"?`;
+            
+        if (!confirm(msg)) return;
+        
+        const target = 'Outros';
+        
+        if (!isVisitor) {
+             transactions.forEach(t => { if(t.cat === name) updateDoc(doc(db, "transactions", t.id), {cat: target}); });
+             fixos.forEach(f => { if(f.cat === name) updateDoc(doc(db, "fixos", f.id), {cat: target}); });
+        } else {
+             transactions = transactions.map(t => t.cat === name ? {...t, cat:target} : t);
+             fixos = fixos.map(f => f.cat === name ? {...f, cat:target} : f);
+        }
+
+        const newCats = CATS.filter(c => c.name !== name);
+        await saveCatsToDB(newCats);
+        openCategoryManager();
+    }
+
+    window.quickAddCategory = function(selectId) {
+        const createdName = window.addNewCategory();
+        if (!createdName) return;
+        
+        const select = document.getElementById(selectId);
+        if (select) {
+            select.innerHTML = getSortedCats().map(c => `<option value="${c.name}"${createdName === c.name ? ' selected' : ''}>${c.name}</option>`).join('');
+            select.value = createdName;
+        }
+    };
 
 
     // ==========================================
@@ -1226,6 +1379,14 @@
         currentFamilyId = 'visitor-local';
         document.body.classList.remove('dark-theme'); 
         
+        // Categorias Padrão para o Visitante
+        CATS = [
+            {name:'Alimentação', color:'#1D9E75'}, {name:'Transporte', color:'#378ADD'},
+            {name:'Moradia', color:'#534AB7'}, {name:'Saúde', color:'#D85A30'},
+            {name:'Lazer', color:'#D4537E'}, {name:'Educação', color:'#BA7517'},
+            {name:'Outros', color:'#888780'}
+        ];
+        
         clearData(); 
         
         document.getElementById('authScreen').classList.add('hidden');
@@ -1241,6 +1402,21 @@
     function setupRealtimeListeners(fId) {
         clearData();
         
+        // Puxa as Categorias da Família (Se existirem)
+        unsubscribers.push(onSnapshot(doc(db, "familySettings", fId), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().categories) {
+                CATS = docSnap.data().categories;
+            } else {
+                CATS = [
+                    {name:'Alimentação', color:'#1D9E75'}, {name:'Transporte', color:'#378ADD'},
+                    {name:'Moradia', color:'#534AB7'}, {name:'Saúde', color:'#D85A30'},
+                    {name:'Lazer', color:'#D4537E'}, {name:'Educação', color:'#BA7517'},
+                    {name:'Outros', color:'#888780'}
+                ];
+            }
+            renderAll();
+        }));
+
         const qTrans = query(collection(db, "transactions"), where("familyId", "==", fId));
         const qFixos = query(collection(db, "fixos"), where("familyId", "==", fId));
         const qEvents = query(collection(db, "events"), where("familyId", "==", fId));
@@ -1500,9 +1676,12 @@
             <div class="two-col">
                 <div class="form-row">
                     <label>Categoria</label>
-                    <select id="f_cat">
-                        ${CATS.map(c => `<option value="${c.name}"${t && t.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}
-                    </select>
+                    <div style="display:flex; gap:8px;">
+                        <select id="f_cat">
+                            ${getSortedCats().map(c => `<option value="${c.name}"${t && t.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}
+                        </select>
+                        <button type="button" class="add-btn" onclick="quickAddCategory('f_cat')">+ Nova</button>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label>Tipo</label>
@@ -1535,9 +1714,12 @@
             <div class="two-col">
                 <div class="form-row">
                     <label>Categoria</label>
-                    <select id="ff_cat">
-                        ${CATS.map(c => `<option value="${c.name}"${f && f.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}
-                    </select>
+                    <div style="display:flex; gap:8px;">
+                        <select id="ff_cat">
+                            ${getSortedCats().map(c => `<option value="${c.name}"${f && f.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}
+                        </select>
+                        <button type="button" class="add-btn" onclick="quickAddCategory('ff_cat')">+ Nova</button>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label>Dia do vencimento</label>
@@ -1609,10 +1791,6 @@
     // ==========================================
     // FUNÇÕES DE EXIBIÇÃO E CÁLCULOS DA TELA
     // ==========================================
-    function findCategoryByName(name) { 
-        return CATS.find(c => c.name.toLowerCase() === String(name || '').trim().toLowerCase()); 
-    }
-    
     // FORMATAÇÃO DO DINHEIRO COM PONTO NO MILHAR
     function fmt(v) {
         return 'R$ ' + (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
