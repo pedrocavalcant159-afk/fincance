@@ -967,6 +967,26 @@
         .notes-empty { grid-column: 1 / -1; padding: 54px 20px; text-align: center; border: 1px dashed var(--color-border-tertiary); border-radius: 12px; color: var(--color-text-secondary); }
         .notes-empty-icon { width: 42px; height: 42px; display: grid; place-items: center; margin: 0 auto 10px; border-radius: 12px; color: var(--color-text-active); background: var(--color-bg-active); font-size: 19px; }
         .notes-empty strong { display: block; margin-bottom: 4px; color: var(--color-text-primary); font-size: 13px; }
+        .modal.modal-wide { width: min(1040px, 100%); max-height: min(92dvh, 820px); }
+        .import-dropzone { display: grid; place-items: center; gap: 7px; min-height: 170px; padding: 24px; border: 1px dashed var(--color-border-active); border-radius: 12px; text-align: center; color: var(--color-text-secondary); background: var(--color-background-secondary); cursor: pointer; }
+        .import-dropzone:hover, .import-dropzone.dragging { border-color: var(--color-text-active); background: var(--color-bg-active); }
+        .import-dropzone strong { color: var(--color-text-primary); font-size: 14px; }
+        .import-dropzone span { font-size: 12px; }
+        .import-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .import-stat { padding: 7px 10px; border: 1px solid var(--color-border-tertiary); border-radius: 8px; color: var(--color-text-secondary); background: var(--color-background-secondary); font-size: 11px; }
+        .import-stat strong { margin-right: 4px; color: var(--color-text-primary); font-size: 13px; }
+        .import-review-wrap { max-height: 420px; overflow: auto; border: 1px solid var(--color-border-tertiary); border-radius: 10px; }
+        .import-review { min-width: 880px; }
+        .import-review th { position: sticky; top: 0; z-index: 1; background: var(--color-background-secondary); }
+        .import-review td { padding: 7px 6px; }
+        .import-review tr.import-duplicate { opacity: .58; }
+        .import-review input:not([type="checkbox"]), .import-review select { width: 100%; min-width: 105px; padding: 7px 8px; border: 1px solid var(--color-border-tertiary); border-radius: 6px; color: var(--color-text-primary); background: var(--color-background-primary); font: inherit; font-size: 11px; }
+        .import-review .import-description { min-width: 210px; }
+        .import-review .import-category { min-width: 130px; }
+        .import-review .import-value { min-width: 100px; }
+        .import-review input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--navy); }
+        .import-help { margin: 10px 0 0; color: var(--color-text-secondary); font-size: 11px; line-height: 1.5; }
+        .import-hidden-input { display: none; }
 
         @keyframes fadeIn { from { opacity: 0; } }
         @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -983,6 +1003,7 @@
             .auth-box { padding: 26px 20px; border-radius: 16px; }
             .modal-overlay { align-items: flex-end; padding: 0; }
             .modal { width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 20px 20px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); animation-name: sheetIn; }
+            .modal.modal-wide { max-height: 94dvh; }
             .two-col { grid-template-columns: 1fr; gap: 0; }
             .toast-region { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
             .section-header { align-items: flex-start; gap: 10px; }
@@ -1324,6 +1345,8 @@
                                     <span>⌕</span>
                                     <input type="search" id="transactionSearch" placeholder="Buscar" autocomplete="off">
                                 </label>
+                                <button class="add-btn" id="importTransBtn" title="Importar transações de TXT, CSV ou Excel">⇧ Importar</button>
+                                <input class="import-hidden-input" type="file" id="importTransInput" accept=".txt,.csv,.xlsx,.xls,.xlsm,.ods,text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                                 <button class="add-btn" id="exportTransBtn" title="Exportar mês em CSV">⇩ Exportar</button>
                                 <button class="add-btn add-btn-primary" id="addTransBtn">+ Adicionar</button>
                             </div>
@@ -1415,7 +1438,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -1474,6 +1497,12 @@
     let transactionSearch = '';
     let noteSearch = '';
     let dialogResolver = null;
+    let importRows = [];
+    let importFileName = '';
+    let importInvalidCount = 0;
+    let sheetJsLoader = null;
+    const MAX_IMPORT_ROWS = 450;
+    const SHEETJS_URL = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
 
     function escapeHTML(value) {
         return String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
@@ -2562,6 +2591,448 @@
         showToast('Relatório exportado com sucesso.');
     }
 
+    const IMPORT_HEADER_ALIASES = {
+        date: ['data', 'date', 'data lancamento', 'data movimento', 'data transacao', 'dt'],
+        desc: ['descricao', 'descrição', 'description', 'historico', 'histórico', 'estabelecimento', 'lancamento', 'lançamento', 'detalhe', 'detalhes', 'titulo', 'título', 'favorecido', 'beneficiario', 'beneficiário', 'memo'],
+        cat: ['categoria', 'category', 'classificacao', 'classificação'],
+        type: ['tipo', 'type', 'natureza', 'movimento', 'credito debito', 'crédito débito', 'debito credito', 'débito crédito'],
+        sub: ['subtipo', 'sub tipo', 'recorrencia', 'recorrência'],
+        value: ['valor', 'value', 'amount', 'montante', 'quantia', 'valor transacao', 'valor lançamento'],
+        debit: ['debito', 'débito', 'debit', 'saidas', 'saídas', 'despesas'],
+        credit: ['credito', 'crédito', 'credit', 'entradas', 'receitas']
+    };
+
+    function normalizeImportText(value) {
+        return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    function importHeaderField(value) {
+        const key = normalizeImportText(value);
+        if (!key) return '';
+        return Object.entries(IMPORT_HEADER_ALIASES).find(([, aliases]) => aliases.some(alias => {
+            const normalizedAlias = normalizeImportText(alias);
+            return key === normalizedAlias || key.startsWith(`${normalizedAlias} `) || key.endsWith(` ${normalizedAlias}`);
+        }))?.[0] || '';
+    }
+
+    function importHeaderScore(row) {
+        return new Set((row || []).map(importHeaderField).filter(Boolean)).size;
+    }
+
+    function detectImportLayout(table) {
+        let headerIndex = -1;
+        let bestScore = 0;
+        table.slice(0, 12).forEach((row, index) => {
+            const score = importHeaderScore(row);
+            if (score > bestScore) { bestScore = score; headerIndex = index; }
+        });
+
+        const columns = {};
+        if (bestScore >= 2) {
+            table[headerIndex].forEach((cell, index) => {
+                const field = importHeaderField(cell);
+                if (field && columns[field] === undefined) columns[field] = index;
+            });
+            return { headerIndex, columns, hasHeader: true, score: bestScore };
+        }
+
+        const sample = table.find(row => row?.some(cell => String(cell ?? '').trim())) || [];
+        sample.forEach((cell, index) => {
+            if (columns.date === undefined && parseImportDate(cell)) columns.date = index;
+        });
+        for (let index = sample.length - 1; index >= 0; index--) {
+            if (index !== columns.date && Number.isFinite(parseImportAmount(sample[index])) && String(sample[index]).trim()) {
+                columns.value = index;
+                break;
+            }
+        }
+        for (let index = 0; index < sample.length; index++) {
+            if (index === columns.date || index === columns.value) continue;
+            const text = String(sample[index] ?? '').trim();
+            if (text && !Number.isFinite(parseImportAmount(text))) { columns.desc = index; break; }
+        }
+        return { headerIndex: -1, columns, hasHeader: false, score: 0 };
+    }
+
+    function parseImportDate(value) {
+        if (value instanceof Date && !Number.isNaN(value.getTime())) {
+            return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`;
+        }
+        if (typeof value === 'number' && value > 20000 && value < 80000 && window.XLSX?.SSF) {
+            const parsed = window.XLSX.SSF.parse_date_code(value);
+            if (parsed) return `${parsed.y}-${String(parsed.m).padStart(2, '0')}-${String(parsed.d).padStart(2, '0')}`;
+        }
+        const text = String(value ?? '').trim();
+        if (!text) return '';
+        const iso = text.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+        const local = text.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})/);
+        let year, month, day;
+        if (iso) [, year, month, day] = iso;
+        else if (local) {
+            [, day, month, year] = local;
+            if (year.length === 2) year = Number(year) < 70 ? `20${year}` : `19${year}`;
+        } else return '';
+        const date = new Date(Number(year), Number(month) - 1, Number(day));
+        if (date.getFullYear() !== Number(year) || date.getMonth() !== Number(month) - 1 || date.getDate() !== Number(day)) return '';
+        return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
+    function parseImportAmount(value) {
+        if (typeof value === 'number') return Number.isFinite(value) ? value : NaN;
+        let text = String(value ?? '').trim();
+        if (!text) return NaN;
+        const negative = /^-/.test(text) || /^\(.*\)$/.test(text) || /\b(?:debito|débito|saida|saída)\b/i.test(text);
+        text = text.replace(/[^\d,.-]/g, '').replace(/(?!^)-/g, '');
+        if (!/\d/.test(text)) return NaN;
+        const comma = text.lastIndexOf(',');
+        const dot = text.lastIndexOf('.');
+        if (comma >= 0 && dot >= 0) {
+            const decimal = comma > dot ? ',' : '.';
+            const thousands = decimal === ',' ? /\./g : /,/g;
+            text = text.replace(thousands, '').replace(decimal, '.');
+        } else if (comma >= 0) {
+            const decimals = text.length - comma - 1;
+            text = decimals > 0 && decimals <= 2 ? text.replace(/\./g, '').replace(',', '.') : text.replace(/,/g, '');
+        } else if (dot >= 0) {
+            const decimals = text.length - dot - 1;
+            text = decimals > 0 && decimals <= 2 ? text.replace(/,/g, '') : text.replace(/\./g, '');
+        }
+        const number = Number(text);
+        return Number.isFinite(number) ? (negative ? -Math.abs(number) : number) : NaN;
+    }
+
+    function detectImportType(rawType, amount, description, forcedType = '') {
+        if (forcedType) return forcedType;
+        const type = normalizeImportText(rawType);
+        if (type === 'c' || type === 'e' || /(entrada|receita|credito|credit|income|recebimento)/.test(type)) return 'entrada';
+        if (type === 'd' || type === 's' || /(saida|despesa|debito|debit|expense|pagamento)/.test(type)) return 'saida';
+        if (amount < 0) return 'saida';
+        const desc = normalizeImportText(description);
+        return /(salario|pagamento recebido|pix recebido|transferencia recebida|deposito|rendimento|reembolso|estorno|freelance)/.test(desc) ? 'entrada' : 'saida';
+    }
+
+    function detectImportSubtype(rawSubtype) {
+        const subtype = normalizeImportText(rawSubtype);
+        return /(fixo|recorrente|mensal)/.test(subtype) ? 'fixo' : 'variavel';
+    }
+
+    function detectImportCategory(rawCategory, description, type) {
+        const imported = CATS.find(category => normalizeImportText(category.name) === normalizeImportText(rawCategory));
+        if (imported) return imported.name;
+        const text = normalizeImportText(description);
+        const named = getSortedCats().find(category => {
+            const name = normalizeImportText(category.name);
+            return name !== 'outros' && name.length > 3 && text.includes(name);
+        });
+        if (named) return named.name;
+        const rules = type === 'entrada' ? [
+            ['Salário', ['salario', 'folha pagamento', 'pagamento empresa', 'ordenado']],
+            ['Freelance', ['freelance', 'servico prestado', 'honorario']],
+            ['Investimentos', ['rendimento', 'dividendo', 'juros', 'resgate investimento']]
+        ] : [
+            ['Supermercado', ['supermercado', 'mercado', 'atacadao', 'atacarejo', 'carrefour', 'assai']],
+            ['Alimentação', ['restaurante', 'lanchonete', 'padaria', 'ifood', 'delivery', 'pizzaria', 'cafeteria']],
+            ['Transporte', ['uber', '99app', 'combustivel', 'gasolina', 'posto ', 'estacionamento', 'pedagio', 'metro', 'onibus']],
+            ['Saúde', ['farmacia', 'hospital', 'clinica', 'medico', 'dentista', 'laboratorio', 'plano saude']],
+            ['Moradia', ['aluguel', 'condominio', 'imobiliaria', 'prestacao casa']],
+            ['Contas', ['energia', 'conta luz', 'saneamento', 'conta agua', 'internet', 'telefone', 'celular', 'gas encanado']],
+            ['Educação', ['escola', 'faculdade', 'curso', 'livraria', 'mensalidade escolar']],
+            ['Assinaturas', ['netflix', 'spotify', 'amazon prime', 'disney', 'youtube premium', 'assinatura']],
+            ['Lazer', ['cinema', 'teatro', 'show', 'ingresso', 'bar ', 'parque', 'jogo']],
+            ['Pets', ['petshop', 'pet shop', 'veterinario', 'racao']],
+            ['Viagens', ['hotel', 'pousada', 'passagem', 'companhia aerea', 'airbnb']],
+            ['Impostos', ['imposto', 'ipva', 'iptu', 'darf', 'tributo']],
+            ['Dívidas', ['emprestimo', 'financiamento', 'parcela divida', 'juros atraso']],
+            ['Investimentos', ['aplicacao', 'investimento', 'corretora', 'tesouro direto']],
+            ['Presentes', ['presente', 'floricultura']]
+        ];
+        for (const [categoryName, keywords] of rules) {
+            const category = CATS.find(item => normalizeImportText(item.name) === normalizeImportText(categoryName));
+            if (category && keywords.some(keyword => text.includes(normalizeImportText(keyword)))) return category.name;
+        }
+        return CATS.find(category => normalizeImportText(category.name) === 'outros')?.name || getSortedCats()[0]?.name || 'Outros';
+    }
+
+    function normalizeImportedTable(table) {
+        const cleanTable = table.filter(row => Array.isArray(row) && row.some(cell => String(cell ?? '').trim()));
+        if (!cleanTable.length) return { rows: [], invalid: 0 };
+        const layout = detectImportLayout(cleanTable);
+        const { columns } = layout;
+        if (columns.date === undefined || columns.desc === undefined || (columns.value === undefined && columns.debit === undefined && columns.credit === undefined)) {
+            return parseLooseStatement(cleanTable.map(row => row.join(' ')).join('\n'));
+        }
+        const rows = [];
+        let invalid = 0;
+        cleanTable.slice(layout.headerIndex + 1).forEach(row => {
+            const date = parseImportDate(row[columns.date]);
+            const desc = String(row[columns.desc] ?? '').trim().replace(/\s+/g, ' ').slice(0, 160);
+            const debit = columns.debit === undefined ? NaN : parseImportAmount(row[columns.debit]);
+            const credit = columns.credit === undefined ? NaN : parseImportAmount(row[columns.credit]);
+            let amount = columns.value === undefined ? NaN : parseImportAmount(row[columns.value]);
+            let forcedType = '';
+            if (Number.isFinite(debit) && debit !== 0) { amount = -Math.abs(debit); forcedType = 'saida'; }
+            else if (Number.isFinite(credit) && credit !== 0) { amount = Math.abs(credit); forcedType = 'entrada'; }
+            const type = detectImportType(row[columns.type], amount, desc, forcedType);
+            const normalizedDesc = normalizeImportText(desc);
+            if (!date || !desc || !Number.isFinite(amount) || amount === 0 || /^(saldo|total)( |$)/.test(normalizedDesc)) { invalid++; return; }
+            rows.push({
+                date,
+                desc,
+                cat: detectImportCategory(row[columns.cat], desc, type),
+                tipo: type,
+                sub: detectImportSubtype(row[columns.sub]),
+                valor: Math.abs(amount)
+            });
+        });
+        return { rows, invalid };
+    }
+
+    function parseLooseStatement(text) {
+        const rows = [];
+        let invalid = 0;
+        String(text || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean).forEach(line => {
+            const dateMatch = line.match(/\d{4}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}/);
+            if (!dateMatch) { invalid++; return; }
+            const amountPattern = /-?\s*(?:R\$\s*)?\(?\d{1,3}(?:[.\s]\d{3})*(?:,\d{2})\)?|-?\s*(?:R\$\s*)?\(?\d+(?:[.,]\d{2})\)?/gi;
+            const amountMatches = [...line.matchAll(amountPattern)].filter(match => {
+                const start = match.index ?? 0;
+                const end = start + match[0].length;
+                return end <= dateMatch.index || start >= (dateMatch.index + dateMatch[0].length);
+            });
+            const amountMatch = amountMatches.at(-1);
+            const date = parseImportDate(dateMatch[0]);
+            const amount = parseImportAmount(amountMatch?.[0]);
+            const desc = line.replace(dateMatch[0], ' ').replace(amountMatch?.[0] || '', ' ').replace(/[;|\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);
+            if (!date || !desc || !Number.isFinite(amount) || amount === 0) { invalid++; return; }
+            const type = detectImportType('', amount, desc);
+            rows.push({ date, desc, cat: detectImportCategory('', desc, type), tipo: type, sub: 'variavel', valor: Math.abs(amount) });
+        });
+        return { rows, invalid };
+    }
+
+    function parseDelimitedText(text, delimiter) {
+        const rows = [[]];
+        let value = '';
+        let quoted = false;
+        for (let index = 0; index < text.length; index++) {
+            const char = text[index];
+            if (char === '"') {
+                if (quoted && text[index + 1] === '"') { value += '"'; index++; }
+                else quoted = !quoted;
+            } else if (char === delimiter && !quoted) {
+                rows.at(-1).push(value.trim()); value = '';
+            } else if ((char === '\n' || char === '\r') && !quoted) {
+                if (char === '\r' && text[index + 1] === '\n') index++;
+                rows.at(-1).push(value.trim()); value = '';
+                rows.push([]);
+            } else value += char;
+        }
+        rows.at(-1).push(value.trim());
+        return rows.filter(row => row.some(cell => cell !== ''));
+    }
+
+    function chooseDelimitedTable(text) {
+        const choices = [';', '\t', '|', ','].map(delimiter => {
+            const table = parseDelimitedText(text, delimiter);
+            const widths = table.slice(0, 20).map(row => row.length);
+            const headerScore = Math.max(0, ...table.slice(0, 12).map(importHeaderScore));
+            const multiColumn = widths.filter(width => width > 1).length;
+            const consistency = widths.length ? Math.max(...widths.map(width => widths.filter(item => item === width).length)) : 0;
+            return { table, headerScore, score: headerScore * 100 + multiColumn * 2 + consistency };
+        }).sort((a, b) => b.score - a.score);
+        return choices[0].headerScore >= 2 ? choices[0].table : null;
+    }
+
+    function decodeImportText(buffer) {
+        try { return new TextDecoder('utf-8', { fatal: true }).decode(buffer); }
+        catch (_) { return new TextDecoder('windows-1252').decode(buffer); }
+    }
+
+    function loadSheetJS() {
+        if (window.XLSX) return Promise.resolve(window.XLSX);
+        if (sheetJsLoader) return sheetJsLoader;
+        sheetJsLoader = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = SHEETJS_URL;
+            script.onload = () => {
+                if (window.XLSX) resolve(window.XLSX);
+                else { sheetJsLoader = null; reject(new Error('Biblioteca de Excel indisponível.')); }
+            };
+            script.onerror = () => {
+                sheetJsLoader = null;
+                reject(new Error('Não foi possível carregar o leitor de Excel. Verifique sua conexão.'));
+            };
+            document.head.appendChild(script);
+        });
+        return sheetJsLoader;
+    }
+
+    async function readImportFile(file) {
+        if (file.size > 12 * 1024 * 1024) throw new Error('O arquivo deve ter no máximo 12 MB.');
+        const extension = file.name.split('.').pop().toLocaleLowerCase('pt-BR');
+        const buffer = await file.arrayBuffer();
+        if (['xlsx', 'xls', 'xlsm', 'ods'].includes(extension)) {
+            const XLSX = await loadSheetJS();
+            const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+            const result = { rows: [], invalid: 0 };
+            workbook.SheetNames.forEach(sheetName => {
+                const table = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: true, defval: '', blankrows: false });
+                const parsed = normalizeImportedTable(table);
+                result.rows.push(...parsed.rows);
+                result.invalid += parsed.invalid;
+            });
+            return result;
+        }
+        if (!['txt', 'csv'].includes(extension) && !file.type.startsWith('text/')) throw new Error('Use um arquivo TXT, CSV, XLSX, XLS, XLSM ou ODS.');
+        const text = decodeImportText(buffer).replace(/^\uFEFF/, '');
+        const table = chooseDelimitedTable(text);
+        return table ? normalizeImportedTable(table) : parseLooseStatement(text);
+    }
+
+    function importedTransactionKey(item) {
+        return [item.date, normalizeImportText(item.desc), item.tipo, Number(item.valor).toFixed(2)].join('|');
+    }
+
+    function prepareImportRows(parsedRows) {
+        const known = new Set(transactions.map(importedTransactionKey));
+        return parsedRows.map((row, index) => {
+            const key = importedTransactionKey(row);
+            const duplicate = known.has(key);
+            known.add(key);
+            return { ...row, importId: index, duplicate, selected: !duplicate };
+        });
+    }
+
+    function categoryImportOptions(selected) {
+        return getSortedCats().map(category => `<option value="${escapeHTML(category.name)}"${category.name === selected ? ' selected' : ''}>${escapeHTML(category.name)}</option>`).join('');
+    }
+
+    function showImportReview() {
+        const duplicates = importRows.filter(row => row.duplicate).length;
+        const rowsHtml = importRows.map((row, index) => `
+            <tr class="${row.duplicate ? 'import-duplicate' : ''}">
+                <td><input type="checkbox" ${row.selected ? 'checked' : ''} onchange="updateImportRow(${index}, 'selected', this.checked)" aria-label="Selecionar ${escapeHTML(row.desc)}"></td>
+                <td><input type="date" value="${row.date}" onchange="updateImportRow(${index}, 'date', this.value)"></td>
+                <td><input class="import-description" type="text" maxlength="160" value="${escapeHTML(row.desc)}" onchange="updateImportRow(${index}, 'desc', this.value)"></td>
+                <td><select class="import-category" onchange="updateImportRow(${index}, 'cat', this.value)">${categoryImportOptions(row.cat)}</select></td>
+                <td><select onchange="updateImportRow(${index}, 'tipo', this.value)"><option value="saida"${row.tipo === 'saida' ? ' selected' : ''}>Saída</option><option value="entrada"${row.tipo === 'entrada' ? ' selected' : ''}>Entrada</option></select></td>
+                <td><input class="import-value" type="number" min="0.01" step="0.01" value="${Number(row.valor).toFixed(2)}" onchange="updateImportRow(${index}, 'valor', this.value)"></td>
+            </tr>
+        `).join('');
+        modal = { type: 'import', editId: null };
+        showModal(`
+            <p class="modal-description">Revise os dados identificados em <strong>${escapeHTML(importFileName)}</strong> antes de salvar.</p>
+            <div class="import-summary">
+                <span class="import-stat"><strong>${importRows.length}</strong> identificadas</span>
+                <span class="import-stat"><strong>${duplicates}</strong> possíveis duplicadas</span>
+                <span class="import-stat"><strong>${importInvalidCount}</strong> linhas ignoradas</span>
+            </div>
+            <div class="import-review-wrap">
+                <table class="import-review">
+                    <thead><tr><th><input id="importToggleAll" type="checkbox" checked onchange="toggleAllImported(this.checked)" aria-label="Selecionar todas"></th><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th>Valor</th></tr></thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+            </div>
+            <p class="import-help">Possíveis duplicadas começam desmarcadas. O arquivo é lido no seu dispositivo; apenas as linhas selecionadas serão salvas como transações.</p>
+            <div class="form-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-save" id="saveImportBtn" onclick="saveImportedTransactions()">Importar</button>
+            </div>
+        `, 'Revisar importação');
+        document.querySelector('#modalOverlay .modal')?.classList.add('modal-wide');
+        refreshImportSelectionCount();
+    }
+
+    function refreshImportSelectionCount() {
+        const count = importRows.filter(row => row.selected).length;
+        const button = document.getElementById('saveImportBtn');
+        if (button) { button.textContent = `Importar ${count} transaç${count === 1 ? 'ão' : 'ões'}`; button.disabled = count === 0; }
+        const toggle = document.getElementById('importToggleAll');
+        const selectable = importRows.filter(row => !row.duplicate);
+        if (toggle && selectable.length) {
+            toggle.checked = selectable.every(row => row.selected);
+            toggle.indeterminate = selectable.some(row => row.selected) && !toggle.checked;
+        }
+    }
+
+    window.updateImportRow = function(index, field, value) {
+        const row = importRows[index];
+        if (!row) return;
+        row[field] = field === 'valor' ? Math.abs(parseImportAmount(value)) : value;
+        refreshImportSelectionCount();
+    };
+
+    window.toggleAllImported = function(checked) {
+        importRows.forEach(row => { if (!row.duplicate) row.selected = checked; });
+        document.querySelectorAll('.import-review tbody input[type="checkbox"]').forEach((checkbox, index) => {
+            if (!importRows[index]?.duplicate) checkbox.checked = checked;
+        });
+        refreshImportSelectionCount();
+    };
+
+    window.saveImportedTransactions = async function() {
+        const selected = importRows.filter(row => row.selected);
+        if (!selected.length) return showModalError('Selecione pelo menos uma transação para importar.');
+        const invalid = selected.find(row => !parseImportDate(row.date) || !String(row.desc).trim() || !row.cat || !['entrada', 'saida'].includes(row.tipo) || !Number.isFinite(Number(row.valor)) || Number(row.valor) <= 0);
+        if (invalid) return showModalError('Revise as linhas selecionadas: data, descrição, categoria e valor são obrigatórios.');
+        const button = document.getElementById('saveImportBtn');
+        setButtonLoading(button, true);
+        try {
+            const payloads = selected.map(row => ({ date: row.date, desc: String(row.desc).trim(), cat: row.cat, tipo: row.tipo, sub: row.sub || 'variavel', valor: Number(row.valor) }));
+            if (isVisitor) {
+                transactions.push(...payloads.map(payload => ({ id: generateId(), ...payload })));
+                renderAll();
+            } else {
+                const batch = writeBatch(db);
+                payloads.forEach(payload => batch.set(doc(collection(db, 'transactions')), { ...payload, familyId: currentFamilyId, authorId: currentUser.uid }));
+                await batch.commit();
+            }
+            hideModal();
+            showToast(`${payloads.length} transaç${payloads.length === 1 ? 'ão importada' : 'ões importadas'} com sucesso.`);
+        } catch (error) {
+            showModalError(firebaseMessage(error, 'importação das transações'));
+            setButtonLoading(button, false);
+        }
+    };
+
+    function openImportDialog() {
+        showModal(`
+            <label class="import-dropzone" id="importDropzone" for="importTransInput">
+                <strong>Escolha ou arraste seu arquivo</strong>
+                <span>TXT, CSV, XLSX, XLS, XLSM ou ODS · até 12 MB</span>
+                <span>O aplicativo identifica data, descrição, valor, tipo e categoria automaticamente.</span>
+            </label>
+            <p class="import-help">Para melhores resultados, use cabeçalhos como Data, Descrição, Categoria, Tipo e Valor. Extratos TXT com uma transação por linha também são aceitos.</p>
+            <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button></div>
+        `, 'Importar transações');
+        const dropzone = document.getElementById('importDropzone');
+        ['dragenter', 'dragover'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.add('dragging'); }));
+        ['dragleave', 'drop'].forEach(type => dropzone.addEventListener(type, event => { event.preventDefault(); dropzone.classList.remove('dragging'); }));
+        dropzone.addEventListener('drop', event => {
+            const file = event.dataTransfer?.files?.[0];
+            if (file) handleImportFile(file);
+        });
+    }
+
+    async function handleImportFile(file) {
+        const dropzone = document.getElementById('importDropzone');
+        if (dropzone) { dropzone.innerHTML = '<strong>Lendo e organizando o arquivo…</strong><span>Aguarde um instante.</span>'; dropzone.style.pointerEvents = 'none'; }
+        try {
+            const parsed = await readImportFile(file);
+            if (!parsed.rows.length) throw new Error('Nenhuma transação válida foi identificada. Confira se o arquivo contém data, descrição e valor.');
+            if (parsed.rows.length > MAX_IMPORT_ROWS) throw new Error(`Foram encontradas ${parsed.rows.length} transações. Divida o arquivo em grupos de até ${MAX_IMPORT_ROWS} linhas.`);
+            importFileName = file.name;
+            importInvalidCount = parsed.invalid;
+            importRows = prepareImportRows(parsed.rows);
+            showImportReview();
+        } catch (error) {
+            if (dropzone) { dropzone.innerHTML = '<strong>Não foi possível ler este arquivo</strong><span>Escolha outro arquivo para tentar novamente.</span>'; dropzone.style.pointerEvents = ''; }
+            showModalError(error?.message || 'Não foi possível ler o arquivo selecionado.');
+        } finally {
+            document.getElementById('importTransInput').value = '';
+        }
+    }
+
     function monthTrans() { 
         return transactions.filter(t => t.date && t.date.startsWith(`${curYear}-${String(curMonth+1).padStart(2,'0')}`)); 
     }
@@ -3136,6 +3607,11 @@
     });
 
     document.getElementById('exportTransBtn').addEventListener('click', exportTransactions);
+    document.getElementById('importTransBtn').addEventListener('click', openImportDialog);
+    document.getElementById('importTransInput').addEventListener('change', event => {
+        const file = event.target.files?.[0];
+        if (file) handleImportFile(file);
+    });
     
     document.getElementById('addFixoBtn').addEventListener('click', () => { 
         modal = {type:'fixo', editId:null}; 
