@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F7F6F2">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Master — Controle Financeiro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:opsz,wght@8..60,600&amp;display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}body{margin:0;min-height:100dvh}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+        .login{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:var(--bg)}.login-box{width:min(410px,100%);padding:32px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}.brand{display:flex;align-items:center;gap:10px;font-weight:600;margin-bottom:28px}.mark{width:34px;height:34px;display:grid;place-items:center;border-radius:4px;background:var(--accent);color:#fff}h1{font-size:24px;margin:0 0 8px}.subtitle{margin:0 0 24px;color:var(--muted);font-size:13px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--text);outline:0}.primary{width:100%;padding:11px;border:1px solid var(--accent);border-radius:4px;color:white;font-weight:600;background:var(--accent);margin-top:10px}.error{min-height:18px;color:var(--danger);font-size:12px;margin-top:12px}.privacy{margin-top:22px;padding:11px;border:1px solid var(--line);background:var(--soft);border-radius:4px;color:var(--muted);font-size:11px;line-height:1.45}
+        .topbar{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);background:var(--panel)}.topbar .brand{margin:0}.actions{display:flex;align-items:center;gap:8px}.btn{padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted)}.btn:hover{background:var(--soft);color:var(--text)}.shell{width:min(1240px,calc(100% - 32px));margin:30px auto}.heading{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}.heading h1{font-size:28px}.heading p{margin:4px 0 0;color:var(--muted);font-size:13px}.privacy-strip{display:flex;gap:10px;margin-bottom:18px;padding:13px 15px;border:1px solid rgba(52,211,153,.2);border-radius:11px;background:rgba(52,211,153,.06);color:var(--muted);font-size:12px}.privacy-strip strong{color:var(--ok)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.metric{padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}.metric span{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;margin-top:5px;font-size:22px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;border:1px solid var(--line);border-bottom:0;border-radius:12px 12px 0 0;background:var(--panel)}.toolbar input{max-width:340px;background:var(--soft)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:0 0 12px 12px;background:var(--panel)}table{width:100%;border-collapse:collapse;min-width:980px;font-size:12px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{color:var(--muted);font-weight:500;background:var(--soft)}td{color:#cbd3e1}.user-name{color:var(--text);font-weight:650}.user-email{color:var(--muted);font-size:11px;margin-top:2px}.badge{display:inline-flex;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--muted)}.badge.active{color:var(--ok);background:rgba(52,211,153,.1)}.badge.disabled{color:var(--danger);background:rgba(251,113,133,.1)}td select{min-width:105px;padding:7px;background:var(--soft)}.row-actions{display:flex;gap:6px}.row-actions .btn{white-space:nowrap;padding:7px 9px;font-size:11px}.danger{color:var(--danger)}.empty{padding:40px;text-align:center;color:var(--muted)}
+        .modal-overlay{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:20px;background:rgba(20,33,61,.52)}.modal{width:min(420px,100%);padding:22px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}.modal h2{margin:0 0 8px;font-size:18px}.modal p{margin:0;color:var(--muted);font-size:13px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}.confirm{padding:9px 13px;border:1px solid var(--accent);border-radius:4px;color:#fff;background:var(--accent)}.confirm.danger{border-color:var(--danger);background:var(--danger)}.toast-region{position:fixed;right:18px;bottom:18px;z-index:40;display:grid;gap:8px}.toast{max-width:360px;padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--panel);font-size:12px}.toast.ok{border-color:#AFC8BA}.toast.err{border-color:#D7B4B1}
+        @media(max-width:750px){.metrics{grid-template-columns:1fr 1fr}.heading{align-items:flex-start;flex-direction:column}.toolbar{align-items:stretch;flex-direction:column}.toolbar input{max-width:none}.topbar{padding:0 14px}.shell{margin-top:20px}.admin-label{display:none}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+        /* Tokens e acabamento institucional */
+        :root {
+            color-scheme: light;
+            --bg: #F7F6F2;
+            --panel: #FFFDF9;
+            --soft: #EFEEE9;
+            --line: #D8D6CF;
+            --line-strong: #B7BBC2;
+            --text: #14213D;
+            --muted: #4F5968;
+            --accent: #17365D;
+            --accent-hover: #102A49;
+            --ok: #2F6B52;
+            --danger: #A14949;
+            --warn: #80622E;
+            --font-sans: "Source Sans 3", system-ui, sans-serif;
+            --font-serif: "Source Serif 4", Georgia, serif;
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --shadow-modal: 0 12px 32px rgba(20, 33, 61, .14);
+        }
+        body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.5; }
+        h1, h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -.02em; }
+        button, input, select { transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+        button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 2px solid #275B91;
+            outline-offset: 2px;
+        }
+        .login { background: var(--bg); }
+        .login-box { border-radius: var(--radius-md); box-shadow: var(--shadow-modal); background: var(--panel); }
+        .mark { border-radius: var(--radius-sm); background: var(--accent); }
+        .privacy-strip > span:first-child { font-family: "Segoe UI Symbol", var(--font-sans); font-weight: 400; }
+        input, select { border-radius: var(--radius-sm); background: var(--panel); }
+        input:focus, select:focus { border-color: #275B91; box-shadow: 0 0 0 2px rgba(39, 91, 145, .14); }
+        .primary, .confirm { border-radius: var(--radius-sm); border-color: var(--accent); background: var(--accent); }
+        .primary:hover, .confirm:hover { border-color: var(--accent-hover); background: var(--accent-hover); }
+        .privacy, .privacy-strip { border-radius: var(--radius-sm); border-color: var(--line); background: var(--soft); }
+        .privacy strong, .privacy-strip strong { color: var(--ok); }
+        .topbar { background: var(--panel); }
+        .btn { border-radius: var(--radius-sm); }
+        .metric { border-radius: var(--radius-md); background: var(--panel); }
+        .metric strong, td { font-variant-numeric: tabular-nums; }
+        .toolbar { border-radius: var(--radius-md) var(--radius-md) 0 0; background: var(--panel); }
+        .table-wrap { border-radius: 0 0 var(--radius-md) var(--radius-md); background: var(--panel); }
+        table { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+        th, td { padding: 9px 10px; }
+        th { color: var(--muted); background: var(--soft); font-size: 10.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+        td { color: var(--text); }
+        .badge { border-radius: var(--radius-sm); font-weight: 600; }
+        .badge.active { color: var(--ok); background: #E7F0EB; }
+        .badge.disabled { color: var(--danger); background: #F4E8E7; }
+        .modal-overlay { background: rgba(20, 33, 61, .52); backdrop-filter: none; }
+        .modal { border-radius: var(--radius-md); box-shadow: var(--shadow-modal); background: var(--panel); }
+        .confirm.danger { border-color: var(--danger); background: var(--danger); }
+        .toast { border-radius: var(--radius-sm); box-shadow: 0 6px 18px rgba(20, 33, 61, .12); background: var(--panel); }
+    </style>
+</head>
+<body>
+    <section class="login" id="loginView">
+        <div class="login-box">
+            <div class="brand"><span class="mark">CF</span><span>Controle Financeiro Master</span></div>
+            <h1>Acesso administrativo</h1>
+            <p class="subtitle">Entre com uma conta que possua a permissão segura de administrador.</p>
+            <div class="field"><label for="adminEmail">E-mail</label><input id="adminEmail" type="email" autocomplete="email"></div>
+            <div class="field"><label for="adminPassword">Senha</label><input id="adminPassword" type="password" autocomplete="current-password"></div>
+            <button class="primary" id="adminLoginBtn">Entrar no painel</button>
+            <div class="error" id="loginError" role="alert"></div>
+            <div class="privacy"><strong>Separação de dados:</strong> este painel não consulta transações, gastos fixos, eventos, despesas de eventos ou notas pessoais.</div>
+        </div>
+    </section>
+
+    <div id="adminApp" class="hidden">
+        <header class="topbar">
+            <div class="brand"><span class="mark">CF</span><span>Controle Financeiro <span class="admin-label">Master</span></span></div>
+            <div class="actions"><span id="adminIdentity" class="admin-label" style="font-size:12px;color:var(--muted)"></span><button class="btn" id="refreshBtn">↻ Atualizar</button><button class="btn" id="logoutBtn">Sair</button></div>
+        </header>
+        <main class="shell">
+            <div class="heading"><div><h1>Contas e assinaturas</h1><p>Administre acesso e planos sem visualizar a vida financeira dos clientes.</p></div></div>
+            <div class="privacy-strip"><span>◈</span><span><strong>Privacidade por desenho:</strong> somente metadados de identidade, acesso e assinatura são retornados. Conteúdo financeiro e notas pessoais permanecem fora deste painel.</span></div>
+            <section class="metrics">
+                <div class="metric"><span>Total de contas</span><strong id="metricTotal">—</strong></div>
+                <div class="metric"><span>Assinaturas ativas</span><strong id="metricActive">—</strong></div>
+                <div class="metric"><span>Em teste</span><strong id="metricTrial">—</strong></div>
+                <div class="metric"><span>Contas bloqueadas</span><strong id="metricDisabled">—</strong></div>
+            </section>
+            <section>
+                <div class="toolbar"><input id="userSearch" type="search" placeholder="Buscar por nome ou e-mail"><span id="resultCount" style="color:var(--muted);font-size:12px"></span></div>
+                <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Criada em</th><th>Último acesso</th><th>Plano</th><th>Assinatura</th><th>Conta</th><th>Ações</th></tr></thead><tbody id="usersBody"></tbody></table><div class="empty hidden" id="emptyState">Nenhuma conta encontrada.</div></div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay hidden" id="modalOverlay"><div class="modal"><h2 id="modalTitle"></h2><p id="modalMessage"></p><div class="modal-actions"><button class="btn" id="modalCancel">Cancelar</button><button class="confirm" id="modalConfirm">Confirmar</button></div></div></div>
+    <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js';
+
+        const firebaseConfig={apiKey:'AIzaSyDrM-SLC48LHS3KwJjCe0DOIBHLrCggqcg',authDomain:'financeiro-familia-44fac.firebaseapp.com',projectId:'financeiro-familia-44fac',storageBucket:'financeiro-familia-44fac.firebasestorage.app',messagingSenderId:'80711008078',appId:'1:80711008078:web:09b87095ec880c2bbde81f'};
+        const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+        let users=[],modalResolve=null;
+        const $=id=>document.getElementById(id);
+        const esc=value=>String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+        const date=value=>{if(!value)return'—';const parsed=typeof value.toDate==='function'?value.toDate():new Date(value);return Number.isNaN(parsed.getTime())?'—':new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(parsed)};
+        function toast(message,type='ok'){const el=document.createElement('div');el.className=`toast ${type}`;el.textContent=message;$('toastRegion').appendChild(el);setTimeout(()=>el.remove(),4500)}
+        function confirmBox(title,message,label='Confirmar',danger=false){$('modalTitle').textContent=title;$('modalMessage').textContent=message;$('modalConfirm').textContent=label;$('modalConfirm').classList.toggle('danger',danger);$('modalOverlay').classList.remove('hidden');return new Promise(resolve=>modalResolve=resolve)}
+        function closeModal(value=false){$('modalOverlay').classList.add('hidden');const resolve=modalResolve;modalResolve=null;resolve?.(value)}
+        $('modalCancel').onclick=()=>closeModal(false);$('modalConfirm').onclick=()=>closeModal(true);$('modalOverlay').onclick=e=>{if(e.target===e.currentTarget)closeModal(false)};
+
+        async function login(){const button=$('adminLoginBtn'),email=$('adminEmail').value.trim(),password=$('adminPassword').value;$('loginError').textContent='';if(!email||!password){$('loginError').textContent='Informe e-mail e senha.';return}button.disabled=true;button.textContent='Entrando…';try{await signInWithEmailAndPassword(auth,email,password)}catch(error){$('loginError').textContent='Não foi possível entrar. Verifique os dados e a permissão da conta.'}finally{button.disabled=false;button.textContent='Entrar no painel'}}
+        $('adminLoginBtn').onclick=login;$('adminPassword').onkeydown=e=>{if(e.key==='Enter')login()};$('logoutBtn').onclick=()=>signOut(auth);$('refreshBtn').onclick=loadUsers;
+
+        onAuthStateChanged(auth,async user=>{if(!user){$('loginView').classList.remove('hidden');$('adminApp').classList.add('hidden');return}try{const adminDoc=await getDoc(doc(db,'admins',user.uid));if(!adminDoc.exists()||adminDoc.data().active!==true){await signOut(auth);$('loginError').textContent='Esta conta não possui permissão de administrador.';return}$('adminIdentity').textContent=user.email;$('loginView').classList.add('hidden');$('adminApp').classList.remove('hidden');await loadUsers()}catch(error){await signOut(auth);$('loginError').textContent='Não foi possível validar a permissão administrativa.'}});
+
+        async function writeAudit(action,targetUid,details={}){await addDoc(collection(db,'adminAuditLogs'),{adminUid:auth.currentUser.uid,action,targetUid,details,createdAt:serverTimestamp()})}
+        async function loadUsers(){const button=$('refreshBtn');button.disabled=true;$('usersBody').innerHTML='<tr><td colspan="7" class="empty">Carregando contas…</td></tr>';try{const snapshot=await getDocs(collection(db,'users'));users=snapshot.docs.map(item=>{const profile=item.data();return{uid:item.id,email:profile.email||null,username:profile.username||null,displayName:null,disabled:profile.accountDisabled===true,createdAt:profile.createdAt||null,lastSignInAt:profile.lastSignInAt||null,plan:['free','essential','pro'].includes(profile.plan)?profile.plan:'free',subscriptionStatus:['trialing','active','past_due','canceled'].includes(profile.subscriptionStatus)?profile.subscriptionStatus:'trialing'}});render()}catch(error){$('usersBody').innerHTML='<tr><td colspan="7" class="empty">Não foi possível carregar as contas.</td></tr>';toast('Falha ao carregar contas. Confira as regras do Firestore e sua permissão de administrador.','err')}finally{button.disabled=false}}
+        function render(){const term=$('userSearch').value.trim().toLocaleLowerCase('pt-BR'),filtered=users.filter(u=>!term||[u.email,u.displayName,u.username].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term)));$('metricTotal').textContent=users.length;$('metricActive').textContent=users.filter(u=>u.subscriptionStatus==='active').length;$('metricTrial').textContent=users.filter(u=>u.subscriptionStatus==='trialing').length;$('metricDisabled').textContent=users.filter(u=>u.disabled).length;$('resultCount').textContent=`${filtered.length} resultado(s)`;$('emptyState').classList.toggle('hidden',filtered.length>0);$('usersBody').innerHTML=filtered.map(u=>`<tr data-uid="${esc(u.uid)}"><td><div class="user-name">${esc(u.username||u.displayName||'Sem nome')}</div><div class="user-email">${esc(u.email||'Sem e-mail')}</div></td><td>${date(u.createdAt)}</td><td>${date(u.lastSignInAt)}</td><td><select class="plan"><option value="free" ${u.plan==='free'?'selected':''}>Gratuito</option><option value="essential" ${u.plan==='essential'?'selected':''}>Essencial</option><option value="pro" ${u.plan==='pro'?'selected':''}>Pro</option></select></td><td><select class="status"><option value="trialing" ${u.subscriptionStatus==='trialing'?'selected':''}>Teste</option><option value="active" ${u.subscriptionStatus==='active'?'selected':''}>Ativa</option><option value="past_due" ${u.subscriptionStatus==='past_due'?'selected':''}>Pendente</option><option value="canceled" ${u.subscriptionStatus==='canceled'?'selected':''}>Cancelada</option></select></td><td><span class="badge ${u.disabled?'disabled':'active'}">${u.disabled?'Bloqueada':'Ativa'}</span></td><td><div class="row-actions"><button class="btn save">Salvar plano</button><button class="btn reset">Redefinir senha</button><button class="btn toggle ${u.disabled?'':'danger'}">${u.disabled?'Reativar':'Bloquear'}</button></div></td></tr>`).join('')}
+        $('userSearch').oninput=render;
+        $('usersBody').onclick=async event=>{const button=event.target.closest('button'),row=event.target.closest('tr');if(!button||!row)return;const user=users.find(item=>item.uid===row.dataset.uid);if(!user)return;
+            if(button.classList.contains('reset')){if(!user.email)return toast('Esta conta ainda não possui e-mail sincronizado. Peça ao cliente para entrar novamente.','err');if(!await confirmBox('Enviar redefinição de senha?',`O Firebase enviará um link seguro para ${user.email}. A senha atual e a nova senha não ficam visíveis para o administrador.`,'Enviar link'))return;try{await sendPasswordResetEmail(auth,user.email);await writeAudit('password_reset.requested',user.uid,{email:user.email});toast('E-mail de redefinição enviado.')}catch(error){toast('Não foi possível enviar o e-mail de redefinição.','err')}}
+            if(button.classList.contains('toggle')){const next=!user.disabled;if(user.uid===auth.currentUser.uid&&next)return toast('Você não pode bloquear sua própria conta.','err');if(!await confirmBox(next?'Bloquear conta?':'Reativar conta?',next?'O cliente será desconectado e ficará sem acesso aos dados até a reativação.':'O cliente poderá voltar a acessar o serviço.',next?'Bloquear':'Reativar',next))return;button.disabled=true;try{await updateDoc(doc(db,'users',user.uid),{accountDisabled:next,adminUpdatedAt:serverTimestamp(),adminUpdatedBy:auth.currentUser.uid});await writeAudit(next?'account.disabled':'account.enabled',user.uid);toast(next?'Conta bloqueada.':'Conta reativada.');await loadUsers()}catch(error){toast('Não foi possível alterar a conta.','err')}finally{button.disabled=false}}
+            if(button.classList.contains('save')){const plan=row.querySelector('.plan').value,status=row.querySelector('.status').value;if(!await confirmBox('Atualizar assinatura?',`O plano será alterado para ${plan} e a situação para ${status}.`,'Salvar alteração'))return;button.disabled=true;try{await updateDoc(doc(db,'users',user.uid),{plan,subscriptionStatus:status,adminUpdatedAt:serverTimestamp(),adminUpdatedBy:auth.currentUser.uid});await writeAudit('subscription.updated',user.uid,{plan,subscriptionStatus:status});toast('Assinatura atualizada.');await loadUsers()}catch(error){toast('Não foi possível atualizar a assinatura.','err')}finally{button.disabled=false}}
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F7F6F2">
+    <title>Política de Privacidade — Controle Financeiro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:opsz,wght@8..60,600&amp;display=swap" rel="stylesheet">
+    <style>
+        :root { color-scheme:light; --bg:#F7F6F2; --card:#FFFDF9; --soft:#EFEEE9; --line:#D8D6CF; --text:#14213D; --muted:#4F5968; --accent:#17365D; --ok:#2F6B52; --font-sans:"Source Sans 3",system-ui,sans-serif; --font-serif:"Source Serif 4",Georgia,serif; --radius-sm:4px; --radius-md:6px; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:"Source Sans 3",system-ui,sans-serif; color:var(--text); background:var(--bg); line-height:1.65; }
+        a { color:var(--accent); }
+        .topbar { position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; padding:14px max(20px,calc((100vw - 980px)/2)); border-bottom:1px solid var(--line); background:var(--card); }
+        .brand { display:flex; align-items:center; gap:10px; color:var(--text); text-decoration:none; font-weight:750; }
+        .mark { width:30px; height:30px; display:grid; place-items:center; border-radius:4px; background:var(--accent); }
+        .back { color:var(--muted); text-decoration:none; font-size:13px; }
+        main { width:min(900px,calc(100% - 32px)); margin:46px auto 80px; }
+        .eyebrow { color:var(--accent); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; }
+        h1 { margin:8px 0 8px; font-size:clamp(30px,5vw,48px); line-height:1.1; letter-spacing:-.045em; }
+        .updated,.lead { color:var(--muted); }
+        .lead { font-size:17px; max-width:760px; }
+        .promise { display:grid; grid-template-columns:auto 1fr; gap:14px; margin:28px 0; padding:20px; border:1px solid rgba(52,211,153,.25); background:rgba(52,211,153,.07); border-radius:16px; }
+        .promise strong { color:var(--ok); display:block; margin-bottom:4px; }
+        .promise .icon { font-size:24px; color:var(--ok); }
+        .warning { margin:24px 0; padding:16px 18px; background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.3); border-radius:12px; color:#fcd48a; font-size:13px; }
+        nav { display:flex; flex-wrap:wrap; gap:8px; margin:28px 0 36px; }
+        nav a { padding:7px 11px; border:1px solid var(--line); border-radius:4px; color:var(--muted); text-decoration:none; font-size:12px; }
+        section { padding:26px 0; border-top:1px solid var(--line); }
+        h2 { margin:0 0 12px; font-size:21px; letter-spacing:-.02em; }
+        h3 { margin:20px 0 6px; font-size:15px; }
+        p,li { color:#c2cad9; font-size:14px; }
+        li { margin:6px 0; }
+        .data-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+        .data-table th,.data-table td { padding:12px; border:1px solid var(--line); text-align:left; vertical-align:top; }
+        .data-table th { color:var(--muted); background:var(--soft); }
+        .data-table td { color:#c2cad9; }
+        footer { padding:28px 16px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:12px; }
+        @media(max-width:650px){ .data-table { display:block; overflow-x:auto; } main{margin-top:30px}.topbar{padding:12px 16px} }
+
+        /* Tokens e acabamento institucional */
+        body { font-family: var(--font-sans); color: var(--text); background: var(--bg); line-height: 1.65; }
+        h1, h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -.025em; }
+        h3 { font-weight: 600; }
+        a:focus-visible { outline: 2px solid #275B91; outline-offset: 3px; }
+        .topbar { background: var(--card); backdrop-filter: none; }
+        .mark { border-radius: var(--radius-sm); background: var(--accent); box-shadow: none; }
+        .promise .icon { font-family: "Segoe UI Symbol", var(--font-sans); font-weight: 400; }
+        main { margin-top: 40px; }
+        .eyebrow { color: var(--accent); }
+        p, li, .data-table td { color: #39465A; }
+        .updated, .lead { color: var(--muted); }
+        .promise { border-radius: var(--radius-md); border-color: #AFC8BA; background: #E7F0EB; }
+        .promise .icon, .promise strong { color: var(--ok); }
+        .warning { border-radius: var(--radius-sm); color: #654B21; background: #F3EEDF; border-color: #CDBB8F; }
+        nav a { border-radius: var(--radius-sm); color: var(--muted); background: var(--card); }
+        nav a:hover { border-color: #9AAEC3; color: var(--accent); }
+        .data-table { font-variant-numeric: tabular-nums; }
+        .data-table th, .data-table td { padding: 10px; }
+        .data-table th { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="index.html"><span class="mark">CF</span><span>Controle Financeiro</span></a>
+        <a class="back" href="index.html">← Voltar ao aplicativo</a>
+    </header>
+    <main>
+        <div class="eyebrow">Transparência e LGPD</div>
+        <h1>Política de Privacidade</h1>
+        <p class="updated">Versão 2026-10-01 · Atualizada em 1º de outubro de 2026</p>
+        <p class="lead">Esta política explica quais dados são tratados pelo Controle Financeiro, por que são necessários, onde ficam armazenados e quais escolhas você possui.</p>
+
+        <div class="promise">
+            <div class="icon">◈</div>
+            <div><strong>Seu conteúdo financeiro e suas notas são privados.</strong>O painel administrativo do Controle Financeiro foi projetado para gerenciar contas e assinaturas sem consultar transações, saldos, gastos fixos, eventos, anotações financeiras ou o bloco de notas dos clientes.</div>
+        </div>
+
+        <div class="warning"><strong>Configuração obrigatória antes da publicação:</strong> substitua os campos entre colchetes pela razão social ou nome do responsável, CPF/CNPJ, endereço e canal real do encarregado de dados. Solicite revisão de um advogado especializado antes de iniciar cobranças.</div>
+
+        <nav aria-label="Índice">
+            <a href="#responsavel">Responsável</a><a href="#dados">Dados tratados</a><a href="#acesso">Acesso financeiro</a><a href="#finalidades">Finalidades</a><a href="#compartilhamento">Fornecedores</a><a href="#seguranca">Segurança</a><a href="#direitos">Seus direitos</a><a href="#retencao">Retenção</a>
+        </nav>
+
+        <section id="responsavel">
+            <h2>1. Responsável pelo tratamento</h2>
+            <p>O controlador dos dados é <strong>[NOME EMPRESARIAL OU NOME COMPLETO]</strong>, inscrito no <strong>[CPF/CNPJ]</strong>, com endereço em <strong>[ENDEREÇO COMPLETO]</strong>. O canal para assuntos de privacidade e exercício de direitos é <strong>[E-MAIL DE PRIVACIDADE]</strong>.</p>
+            <p>O Firebase/Google atua como fornecedor de infraestrutura e operador de dados nos serviços contratados, conforme os termos aplicáveis.</p>
+        </section>
+
+        <section id="dados">
+            <h2>2. Dados que tratamos</h2>
+            <table class="data-table">
+                <thead><tr><th>Categoria</th><th>Exemplos</th><th>Motivo</th></tr></thead>
+                <tbody>
+                    <tr><td>Cadastro</td><td>Nome, e-mail, identificador da conta e datas de criação/acesso.</td><td>Criar, autenticar e prestar suporte à conta.</td></tr>
+                    <tr><td>Conteúdo financeiro e notas</td><td>Transações, categorias, valores, datas, gastos fixos, eventos e textos inseridos voluntariamente no bloco de notas.</td><td>Entregar as funcionalidades de organização e anotações solicitadas por você.</td></tr>
+                    <tr><td>Assinatura</td><td>Plano, situação da assinatura e referências de cobrança. Dados completos de cartão não devem ser armazenados pelo Controle Financeiro.</td><td>Gerenciar acesso ao plano contratado e cumprir obrigações contratuais e fiscais.</td></tr>
+                    <tr><td>Consentimento e registros</td><td>Versão dos termos, data de aceite e registros administrativos de segurança.</td><td>Comprovar escolhas, prevenir fraude e cumprir obrigações legais.</td></tr>
+                    <tr><td>Dados técnicos</td><td>Endereço IP e informações técnicas que podem ser processadas pela infraestrutura Firebase.</td><td>Segurança, autenticação, diagnóstico e funcionamento do serviço.</td></tr>
+                </tbody>
+            </table>
+            <p>Não solicitamos dados bancários, senhas de bancos ou credenciais de instituições financeiras. Não informe esse tipo de dado em descrições ou anotações.</p>
+        </section>
+
+        <section id="acesso">
+            <h2>3. Quem consegue ver os dados financeiros?</h2>
+            <p><strong>Administradores não visualizam o conteúdo financeiro nem o bloco de notas pelo painel master.</strong> O painel recebe somente metadados de conta necessários ao atendimento: nome, e-mail, plano, situação da assinatura, datas de criação e último acesso e estado ativo/bloqueado.</p>
+            <p>Não vendemos dados pessoais e não utilizamos seus lançamentos para publicidade ou definição de perfil de crédito. Não há acesso humano rotineiro ao conteúdo financeiro.</p>
+            <p>Um acesso técnico excepcional poderá ocorrer apenas quando estritamente necessário para investigar incidente de segurança, atender obrigação legal ou prestar suporte solicitado pelo próprio titular. Esse acesso deve ser limitado a pessoas autorizadas, ter finalidade definida e ser registrado. Prestadores de infraestrutura também podem realizar tratamento técnico nos limites contratuais aplicáveis.</p>
+            <p>As senhas são tratadas pelo Firebase Authentication e não ficam disponíveis para a administração. O administrador pode apenas solicitar o envio de um e-mail oficial de redefinição; ele não vê nem escolhe a nova senha.</p>
+        </section>
+
+        <section id="finalidades">
+            <h2>4. Finalidades e bases legais</h2>
+            <ul>
+                <li>Executar o contrato e fornecer a conta, os recursos financeiros e a assinatura contratada.</li>
+                <li>Cumprir obrigações legais ou regulatórias, inclusive fiscais e de defesa do consumidor.</li>
+                <li>Proteger contas, prevenir abuso e manter a segurança com fundamento no legítimo interesse, respeitados os direitos do titular.</li>
+                <li>Atender solicitações de suporte e exercer direitos em processos administrativos ou judiciais.</li>
+                <li>Quando uma finalidade depender de consentimento, ele será solicitado de forma destacada e poderá ser revogado.</li>
+            </ul>
+            <p>O aceite dos Termos e a ciência desta Política são registrados. Isso não significa que o consentimento seja a única base legal utilizada para todos os tratamentos.</p>
+        </section>
+
+        <section id="compartilhamento">
+            <h2>5. Compartilhamento e armazenamento</h2>
+            <p>Utilizamos Firebase Authentication, Cloud Firestore e Firebase Hosting, serviços fornecidos pelo Google. Esses serviços podem processar dados em infraestrutura localizada fora do Brasil. O Firebase Authentication, segundo a documentação do fornecedor, opera em centros de dados nos Estados Unidos.</p>
+            <p>Quando houver cobrança, o provedor de pagamentos escolhido tratará os dados necessários ao pagamento segundo sua própria política. O nome desse fornecedor e os links correspondentes devem ser informados nesta política antes da ativação da cobrança.</p>
+            <p>Também poderemos compartilhar dados quando exigido por lei, ordem válida de autoridade competente ou para proteção de direitos, sempre limitando o conteúdo ao necessário.</p>
+        </section>
+
+        <section id="seguranca">
+            <h2>6. Segurança</h2>
+            <p>O projeto utiliza autenticação individual, separação lógica por conta e regras de acesso do Firestore. O painel master acessa apenas a coleção de perfis, que contém metadados cadastrais e de assinatura; as regras não concedem ao administrador acesso às coleções financeiras ou de notas. O Firebase informa que cifra dados em trânsito e, para serviços como Firestore e Authentication, também em repouso.</p>
+            <p>Nenhum sistema é absolutamente invulnerável. Em caso de incidente relevante, adotaremos medidas de contenção e as comunicações exigidas pela legislação. O cliente também deve usar senha exclusiva e manter seu e-mail protegido.</p>
+        </section>
+
+        <section id="direitos">
+            <h2>7. Direitos do titular</h2>
+            <p>Nos termos da LGPD, você pode solicitar confirmação do tratamento, acesso, correção, informação sobre compartilhamentos, portabilidade quando aplicável, anonimização, bloqueio ou eliminação de dados tratados irregularmente, revogação do consentimento e revisão de decisões automatizadas, quando existentes.</p>
+            <p>Envie a solicitação para <strong>[E-MAIL DE PRIVACIDADE]</strong>. Poderemos pedir informações para confirmar sua identidade. Alguns registros podem ser preservados quando houver obrigação legal ou necessidade de exercício regular de direitos.</p>
+        </section>
+
+        <section id="retencao">
+            <h2>8. Retenção, exclusão e portabilidade</h2>
+            <p>Os dados permanecem durante a vigência da conta e pelo período necessário ao cumprimento das finalidades descritas. Após pedido de exclusão, o conteúdo será eliminado ou anonimizado, ressalvadas hipóteses legais de conservação e prazos técnicos de backup.</p>
+            <p>O aplicativo oferece exportação mensal em CSV. Solicitações adicionais de portabilidade ou exclusão integral devem ser encaminhadas ao canal de privacidade.</p>
+        </section>
+
+        <section>
+            <h2>9. Crianças e adolescentes</h2>
+            <p>O Controle Financeiro não é direcionado a crianças. Pessoas menores de 18 anos devem utilizar o serviço somente com participação e autorização de seu responsável legal, observadas as regras aplicáveis.</p>
+        </section>
+
+        <section>
+            <h2>10. Atualizações desta política</h2>
+            <p>Alterações relevantes serão comunicadas de forma destacada. A versão e a data de atualização permanecerão identificadas no início do documento. Quando necessário, um novo aceite será solicitado.</p>
+        </section>
+
+        <section>
+            <h2>11. Referências e contato</h2>
+            <p>Esta política foi estruturada considerando a <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm" target="_blank" rel="noopener">Lei Geral de Proteção de Dados</a>, as orientações da <a href="https://www.gov.br/anpd/pt-br/assuntos/titular-de-dados-1/direito-dos-titulares" target="_blank" rel="noopener">ANPD sobre direitos dos titulares</a> e as informações de <a href="https://firebase.google.com/support/privacy/" target="_blank" rel="noopener">privacidade e segurança do Firebase</a>.</p>
+            <p>Contato do controlador/encarregado: <strong>[E-MAIL DE PRIVACIDADE]</strong>.</p>
+        </section>
+    </main>
+    <footer>Controle Financeiro · <a href="termos.html">Termos de Uso</a> · <a href="index.html">Aplicativo</a></footer>
+</body>
+</html>

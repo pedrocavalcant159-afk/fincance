@@ -3,39 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Planilha Financeira Família</title>
+    <meta name="theme-color" content="#F7F6F2">
+    <meta name="description" content="Controle suas entradas, gastos, contas fixas e eventos em um só lugar.">
+    <title>Controle Financeiro — Seu dinheiro, sob controle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:opsz,wght@8..60,600&amp;display=swap" rel="stylesheet">
     <style>
         /* =========================================
            ESTILOS BASE E VARIÁVEIS DE TEMA
            ========================================= */
         :root {
-            --font-sans: system-ui, -apple-system, sans-serif;
+            --font-sans: "Source Sans 3", system-ui, sans-serif;
+            --font-serif: "Source Serif 4", Georgia, serif;
+            --paper: #F7F6F2;
+            --surface: #FFFDF9;
+            --surface-muted: #EFEEE9;
+            --ink: #14213D;
+            --ink-secondary: #4F5968;
+            --line: #D8D6CF;
+            --line-strong: #B7BBC2;
+            --navy: #17365D;
+            --navy-hover: #102A49;
+            --navy-soft: #E8EEF5;
+            --positive: #2F6B52;
+            --negative: #A14949;
+            --warning: #80622E;
+            --focus: #275B91;
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --shadow-sm: 0 1px 2px rgba(20, 33, 61, .06);
+            --shadow-modal: 0 12px 32px rgba(20, 33, 61, .14);
             
             /* Tema Claro (Padrão) */
-            --color-background-tertiary: #f4f4f5; 
-            --color-background-primary: #fff; 
-            --color-background-secondary: #fafafa;
-            --color-border-tertiary: #e4e4e7; 
-            --color-text-primary: #18181b; 
-            --color-text-secondary: #71717a;
-            --color-bg-active: #e0f2fe; 
-            --color-text-active: #0284c7; 
-            --color-border-active: #bae6fd; 
-            --color-hover: #f4f4f5;
+            --color-background-tertiary: var(--paper); 
+            --color-background-primary: var(--surface); 
+            --color-background-secondary: var(--surface-muted);
+            --color-border-tertiary: var(--line); 
+            --color-text-primary: var(--ink); 
+            --color-text-secondary: var(--ink-secondary);
+            --color-bg-active: var(--navy-soft); 
+            --color-text-active: var(--navy); 
+            --color-border-active: #9AAEC3; 
+            --color-hover: #ECEBE6;
         }
         
         body.dark-theme {
             /* Tema Escuro */
-            --color-background-tertiary: #09090b; 
-            --color-background-primary: #18181b; 
-            --color-background-secondary: #27272a;
-            --color-border-tertiary: #3f3f46; 
-            --color-text-primary: #f4f4f5; 
-            --color-text-secondary: #a1a1aa;
-            --color-bg-active: #082f49; 
-            --color-text-active: #38bdf8; 
-            --color-border-active: #0284c7; 
-            --color-hover: #3f3f46;
+            --color-background-tertiary: #111923; 
+            --color-background-primary: #17212D; 
+            --color-background-secondary: #1D2936;
+            --color-border-tertiary: #344252; 
+            --color-text-primary: #EDF0F3; 
+            --color-text-secondary: #A8B1BC;
+            --color-bg-active: #223A52; 
+            --color-text-active: #BDD0E1; 
+            --color-border-active: #58738D; 
+            --color-hover: #222F3C;
         }
 
         * { 
@@ -824,6 +848,308 @@
             .content { padding: 12px; }
             .section { padding: 12px; }
         }
+
+        /* =========================================
+           ACABAMENTO DO PRODUTO
+           ========================================= */
+        :root {
+            --accent: var(--navy);
+            --accent-strong: var(--navy-hover);
+            --success: var(--positive);
+            --danger: var(--negative);
+            --shadow-lg: var(--shadow-modal);
+            color-scheme: light;
+        }
+
+        body.dark-theme {
+            color-scheme: dark;
+        }
+
+        html { background: var(--paper); }
+        body { min-height: 100dvh; line-height: 1.45; }
+        button, input, select, textarea { transition: border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease, opacity .2s ease; }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, .24) !important;
+            outline-offset: 2px;
+        }
+        button:active:not(:disabled) { transform: translateY(1px) scale(.985); }
+        button:disabled { opacity: .55; cursor: not-allowed; }
+
+        .app { height: 100dvh; min-height: 540px; }
+        .sidebar { background: color-mix(in srgb, var(--color-background-primary) 96%, transparent); }
+        .main { background: var(--color-background-tertiary); }
+        .topbar { padding: 12px 18px; background: var(--color-background-primary); }
+        .content { scrollbar-gutter: stable; }
+        .section, .metric-card, .mobile-card { box-shadow: 0 8px 28px rgba(2, 6, 23, .06); }
+        body.dark-theme .section, body.dark-theme .metric-card, body.dark-theme .mobile-card { box-shadow: 0 10px 30px rgba(0, 0, 0, .14); }
+        .metric-card { position: relative; overflow: hidden; }
+        .metric-card::after { content: ""; position: absolute; width: 64px; height: 64px; border-radius: 50%; right: -25px; top: -28px; background: rgba(37, 99, 235, .1); }
+        .metric-value { letter-spacing: -.035em; }
+
+        .brand-mark {
+            width: 34px; height: 34px; border-radius: 10px; display: inline-grid; place-items: center;
+            color: #fff; font-weight: 600; font-size: 17px; background: var(--navy);
+            box-shadow: none;
+        }
+        .brand-mark-small { width: 27px; height: 27px; border-radius: 8px; font-size: 13px; }
+        .auth-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 28px; font-size: 17px; font-weight: 750; letter-spacing: -.02em; }
+        .auth-subtitle { color: var(--color-text-secondary); font-size: 13px; margin: -12px 0 22px; }
+        .visitor-note { margin-top: 5px; color: var(--color-text-secondary); font-size: 11px; }
+        .plan-badge { font-size: 11px; padding: 5px 9px; color: var(--color-text-active); background: var(--color-bg-active); border: 1px solid var(--color-border-active); border-radius: 4px; white-space: nowrap; }
+
+        .auth-overlay { position: fixed; background: var(--color-background-tertiary); }
+        .auth-box { padding: 34px; border-radius: 18px; width: 410px; box-shadow: var(--shadow-lg); animation: modalIn .38s cubic-bezier(.2,.8,.2,1); }
+        .auth-title { font-size: 24px; letter-spacing: -.035em; margin-bottom: 20px; }
+        .auth-box .form-row { text-align: left; }
+        .auth-btn-primary, .btn-save { background: var(--navy); border: 1px solid var(--navy); box-shadow: none; }
+        .auth-btn-primary:hover, .btn-save:hover { opacity: 1; filter: brightness(1.08); box-shadow: 0 10px 25px rgba(29, 78, 216, .3); }
+        .auth-btn-visitor { color: var(--color-text-active); text-decoration: none; }
+        .auth-btn-visitor:hover { text-decoration: underline; }
+        .auth-link { display: block; margin: -2px 0 12px auto; border: 0; background: none; color: var(--color-text-active); font-size: 12px; cursor: pointer; padding: 4px 0; }
+        .auth-link:hover { text-decoration: underline; }
+        .privacy-promise { display: flex; align-items: flex-start; gap: 8px; margin-top: 18px; padding: 11px 12px; border-radius: 10px; text-align: left; color: var(--color-text-secondary); background: rgba(52, 211, 153, .07); border: 1px solid rgba(52, 211, 153, .18); font-size: 11px; line-height: 1.45; }
+        .privacy-promise > span:first-child { color: #34d399; font-size: 14px; }
+        .privacy-promise a, .legal-consent a, .legal-footer a { color: var(--color-text-active); text-decoration: none; }
+        .privacy-promise a:hover, .legal-consent a:hover, .legal-footer a:hover { text-decoration: underline; }
+        .legal-consent { display: grid; grid-template-columns: auto 1fr; gap: 9px; align-items: start; padding: 11px 12px; margin: 4px 0 8px; border: 1px solid var(--color-border-tertiary); border-radius: 9px; color: var(--color-text-secondary); font-size: 11px; line-height: 1.45; text-align: left; cursor: pointer; }
+        .legal-consent:focus-within { border-color: var(--color-border-active); box-shadow: 0 0 0 3px rgba(37, 99, 235, .1); }
+        .legal-consent input { width: 16px; height: 16px; margin-top: 1px; accent-color: var(--accent); }
+        .legal-consent.field-invalid { border-color: #fb7185 !important; background: rgba(251, 113, 133, .07); }
+        .msg-error:not(:empty), .msg-success:not(:empty) { border-radius: 8px; padding: 9px 11px; text-align: left; }
+        .msg-error:not(:empty) { background: rgba(251, 113, 133, .1); border: 1px solid rgba(251, 113, 133, .25); color: #fb7185; }
+        .msg-success:not(:empty) { background: rgba(52, 211, 153, .1); border: 1px solid rgba(52, 211, 153, .25); color: #34d399; }
+
+        .modal-overlay { position: fixed; z-index: 4000; padding: 20px; background: rgba(20, 33, 61, .52); animation: fadeIn .2s ease both; }
+        .modal { width: 440px; max-width: 100%; max-height: min(88dvh, 720px); overflow-y: auto; border-radius: 16px; padding: 24px; box-shadow: var(--shadow-lg); animation: modalIn .28s cubic-bezier(.2,.8,.2,1) both; }
+        .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+        .modal-header h3 { margin: 0; font-size: 17px; }
+        .modal-close { width: 30px; height: 30px; display: grid; place-items: center; padding: 0; flex: 0 0 auto; }
+        .modal-description { color: var(--color-text-secondary); font-size: 13px; margin: -8px 0 18px; }
+        .modal-error { display: none; color: #fb7185; background: rgba(251, 113, 133, .09); border: 1px solid rgba(251, 113, 133, .22); border-radius: 8px; padding: 9px 10px; font-size: 12px; margin: 0 0 14px; }
+        .modal-error.visible { display: block; animation: shake .3s ease; }
+        .field-invalid { border-color: #fb7185 !important; box-shadow: 0 0 0 3px rgba(251, 113, 133, .1) !important; }
+        .dialog-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; margin-bottom: 14px; font-size: 22px; background: var(--color-bg-active); color: var(--color-text-active); }
+        .dialog-icon.danger { background: rgba(251, 113, 133, .12); color: #fb7185; }
+        .btn-danger { background: #e54861; border: 1px solid #fb7185; color: white; border-radius: 7px; padding: 10px 16px; cursor: pointer; font-weight: 650; }
+        .btn-loading { color: transparent !important; position: relative; pointer-events: none; }
+        .btn-loading::after { content: ""; position: absolute; width: 16px; height: 16px; inset: 0; margin: auto; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; animation: spin .65s linear infinite; }
+
+        .toast-region { position: fixed; z-index: 5000; right: 18px; bottom: 18px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { width: min(360px, calc(100vw - 32px)); display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; padding: 12px 14px; border: 1px solid var(--color-border-tertiary); border-radius: 12px; color: var(--color-text-primary); background: var(--color-background-primary); box-shadow: var(--shadow-lg); pointer-events: auto; animation: toastIn .3s cubic-bezier(.2,.8,.2,1) both; }
+        .toast.success .toast-symbol { color: #34d399; }
+        .toast.error .toast-symbol { color: #fb7185; }
+        .toast.info .toast-symbol { color: #60a5fa; }
+        .toast-message { font-size: 13px; }
+        .toast-close { border: 0; background: none; color: var(--color-text-secondary); cursor: pointer; padding: 0 2px; }
+        .toast.leaving { animation: toastOut .2s ease both; }
+
+        .pane-view.active { animation: paneIn .28s ease both; }
+        .tab, .cat-subtab, .add-btn, .icon-btn, .month-nav button { transition-duration: .2s; }
+        .tab:hover, .cat-subtab:hover { background: var(--color-hover); color: var(--color-text-primary); }
+        .bar-fill { transition: width .65s cubic-bezier(.2,.8,.2,1); }
+        tbody tr { transition: background-color .2s ease; }
+        .empty-state { text-align: center; padding: 28px 14px; color: var(--color-text-secondary); font-size: 13px; }
+        .legal-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 14px; padding: 12px 10px 4px; color: var(--color-text-secondary); font-size: 10px; }
+        .section-actions { display: flex; align-items: center; gap: 8px; }
+        .search-field { min-width: 150px; display: flex; align-items: center; gap: 6px; padding: 0 9px; border: 1px solid var(--color-border-tertiary); border-radius: 7px; color: var(--color-text-secondary); background: var(--color-background-secondary); }
+        .search-field:focus-within { border-color: var(--color-border-active); box-shadow: 0 0 0 3px rgba(37, 99, 235, .1); }
+        .search-field input { width: 120px; border: 0; outline: 0; background: transparent; color: var(--color-text-primary); padding: 7px 0; font: inherit; font-size: 12px; }
+        .add-btn-primary { color: #fff; border-color: var(--navy); background: var(--navy); }
+        .add-btn-primary:hover { color: #fff; background: var(--navy-hover); }
+        .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+        .note-card { min-height: 190px; display: flex; flex-direction: column; padding: 16px; border: 1px solid var(--color-border-tertiary); border-radius: 12px; background: var(--color-background-secondary); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+        .note-card:hover { transform: translateY(-2px); border-color: var(--color-border-active); box-shadow: 0 12px 28px rgba(0,0,0,.12); }
+        .note-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+        .note-title { font-size: 14px; font-weight: 700; color: var(--color-text-primary); overflow-wrap: anywhere; }
+        .note-content { flex: 1; display: -webkit-box; overflow: hidden; color: var(--color-text-secondary); font-size: 12px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; -webkit-line-clamp: 6; -webkit-box-orient: vertical; }
+        .note-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--color-border-tertiary); color: var(--color-text-secondary); font-size: 10px; }
+        .note-form-textarea { min-height: 260px; resize: vertical; line-height: 1.55; }
+        .notes-empty { grid-column: 1 / -1; padding: 54px 20px; text-align: center; border: 1px dashed var(--color-border-tertiary); border-radius: 12px; color: var(--color-text-secondary); }
+        .notes-empty-icon { width: 42px; height: 42px; display: grid; place-items: center; margin: 0 auto 10px; border-radius: 12px; color: var(--color-text-active); background: var(--color-bg-active); font-size: 19px; }
+        .notes-empty strong { display: block; margin-bottom: 4px; color: var(--color-text-primary); font-size: 13px; }
+
+        @keyframes fadeIn { from { opacity: 0; } }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+        @keyframes paneIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(18px); } }
+        @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 650px) {
+            .desktop-brand, .plan-badge { display: none; }
+            .topbar { padding: 10px 12px; }
+            .topbar-title { min-height: 32px; }
+            .auth-box { padding: 26px 20px; border-radius: 16px; }
+            .modal-overlay { align-items: flex-end; padding: 0; }
+            .modal { width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 20px 20px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); animation-name: sheetIn; }
+            .two-col { grid-template-columns: 1fr; gap: 0; }
+            .toast-region { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
+            .section-header { align-items: flex-start; gap: 10px; }
+            .section-actions { flex-wrap: wrap; justify-content: flex-end; }
+            .search-field { order: 3; width: 100%; }
+            .search-field input { width: 100%; }
+            .notes-grid { grid-template-columns: 1fr; }
+        }
+        @keyframes sheetIn { from { opacity: .6; transform: translateY(100%); } to { opacity: 1; transform: none; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+        }
+
+        /* =========================================
+           TEMA INSTITUCIONAL — CAMADA VISUAL FINAL
+           ========================================= */
+        html { background: var(--paper); }
+        body { line-height: 1.5; letter-spacing: 0; transition: background-color .15s ease, color .15s ease; }
+        button, input, select, textarea { font-family: var(--font-sans); transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+        button:active:not(:disabled) { transform: none; }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+            outline: 2px solid var(--focus) !important;
+            outline-offset: 2px;
+        }
+
+        .sidebar { border-right-width: 1px; background: var(--color-background-primary); }
+        .sidebar-header, .topbar { border-bottom-width: 1px; }
+        .topbar { background: var(--color-background-primary); backdrop-filter: none; }
+        .sidebar-title, .auth-title, .section-title, .modal-header h3, .modal > h3 {
+            font-family: var(--font-serif);
+            font-weight: 600;
+            letter-spacing: -.015em;
+        }
+        .sidebar-title { font-size: 15px; }
+        .topbar-title { font-weight: 600; }
+        .month-label, .metric-value, .cat-val, td, .mobile-card { font-variant-numeric: tabular-nums; }
+
+        .brand-mark {
+            border-radius: var(--radius-sm);
+            background: var(--navy);
+            box-shadow: none;
+            font-weight: 600;
+        }
+        .brand-mark-small { border-radius: var(--radius-sm); }
+        .icon-btn, .toggle-btn, .dialog-icon, .toast-symbol, .notes-empty-icon,
+        .privacy-promise > span:first-child, .search-field > span:first-child {
+            font-family: "Segoe UI Symbol", var(--font-sans);
+            font-weight: 400;
+            line-height: 1;
+        }
+        .plan-badge, .visitor-badge, .badge, .cat-tag {
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+
+        .auth-overlay { background: var(--color-background-tertiary); }
+        .auth-box {
+            width: 410px;
+            padding: 32px;
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-modal);
+            animation: fadeIn .16s ease both;
+        }
+        .auth-title { font-size: 26px; letter-spacing: -.02em; }
+        .privacy-promise, .legal-consent {
+            border-radius: var(--radius-sm);
+            background: var(--color-background-secondary);
+        }
+        .privacy-promise { border-color: var(--color-border-tertiary); }
+        .privacy-promise > span:first-child { color: var(--positive); }
+        .legal-consent:focus-within, .search-field:focus-within { box-shadow: 0 0 0 2px rgba(39, 91, 145, .14); }
+
+        .section, .metric-card, .mobile-card, .note-card {
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--radius-md);
+            box-shadow: none;
+        }
+        body.dark-theme .section, body.dark-theme .metric-card, body.dark-theme .mobile-card { box-shadow: none; }
+        .metric-card { padding: 14px 15px; background: var(--color-background-primary); }
+        .metric-card::after { display: none; }
+        .metric-label { margin-bottom: 4px; font-size: 11px; letter-spacing: .025em; }
+        .metric-value { font-size: 21px; font-weight: 600; letter-spacing: -.015em; }
+        .metric-value.green { color: var(--positive); }
+        .metric-value.red { color: var(--negative); }
+        .metric-value.blue { color: var(--ink); }
+        .metric-value.orange { color: var(--warning); }
+        .section-title { font-size: 16px; }
+
+        table { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+        th {
+            padding: 8px 9px;
+            border-bottom: 1px solid var(--color-border-tertiary);
+            color: var(--color-text-secondary);
+            background: var(--color-background-secondary);
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: .055em;
+            text-transform: uppercase;
+        }
+        td { padding: 9px; border-bottom: 1px solid var(--color-border-tertiary); }
+        tbody tr:last-child td { border-bottom: 0; }
+        tr:hover td { background: color-mix(in srgb, var(--color-background-secondary) 65%, transparent); }
+        #recentTbody td:nth-child(3), #transTbody td:nth-child(5),
+        #fixoTbody td:nth-child(4), #evtExpTbody td:nth-child(3),
+        table:has(#recentTbody) th:nth-child(3), table:has(#transTbody) th:nth-child(5),
+        table:has(#fixoTbody) th:nth-child(4), table:has(#evtExpTbody) th:nth-child(3) { text-align: right; }
+        #recentTbody td:last-child, #transTbody td:nth-child(5), #fixoTbody td:nth-child(4), #evtExpTbody td:nth-child(3) { font-weight: 600; }
+
+        .toggle-btn, .month-nav button, .tab, .cat-subtab, .add-btn, .icon-btn,
+        .btn-cancel, .btn-save, .btn-danger, .auth-btn-primary, .auth-btn-secondary,
+        .search-field, .add-evt-btn {
+            border-radius: var(--radius-sm);
+            border-width: 1px;
+            box-shadow: none;
+        }
+        .tab.active, .cat-subtab.active { font-weight: 600; }
+        .auth-btn-primary, .btn-save, .add-btn-primary {
+            color: #FFFFFF;
+            border-color: var(--navy);
+            background: var(--navy);
+            box-shadow: none;
+        }
+        .auth-btn-primary:hover, .btn-save:hover, .add-btn-primary:hover {
+            color: #FFFFFF;
+            border-color: var(--navy-hover);
+            background: var(--navy-hover);
+            filter: none;
+            box-shadow: none;
+        }
+        .btn-danger { color: #FFFFFF; border-color: var(--negative); background: var(--negative); }
+        .logout-btn { border-radius: var(--radius-sm); background: transparent; border-color: #C99B9B; color: var(--negative); }
+        body.dark-theme .logout-btn { background: transparent; border-color: #895E62; color: #E2B6B6; }
+
+        .bar-wrap { height: 6px; border-radius: 1px; }
+        .bar-fill { min-height: 0; border-radius: 1px; transition: width .28s ease; }
+        .cat-dot { border-radius: 1px; }
+        .badge-fixo { background: #E7EDF3; color: #365775; }
+        .badge-variavel { background: #F1EDE3; color: #715E3D; }
+        .badge-entrada { background: #E7F0EB; color: var(--positive); }
+        .badge-saida { background: #F4E8E7; color: var(--negative); }
+
+        .note-card { min-height: 185px; background: var(--color-background-primary); transition: border-color .15s ease; }
+        .note-card:hover { transform: none; border-color: var(--line-strong); box-shadow: none; }
+        .note-title { font-family: var(--font-serif); font-weight: 600; }
+        .notes-empty, .notes-empty-icon { border-radius: var(--radius-md); }
+
+        .modal-overlay { background: rgba(20, 33, 61, .52); backdrop-filter: none; animation: fadeIn .15s ease both; }
+        .modal {
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-modal);
+            animation: fadeIn .15s ease both;
+        }
+        .dialog-icon { border-radius: var(--radius-sm); }
+        .toast { border-radius: var(--radius-sm); box-shadow: 0 6px 18px rgba(20, 33, 61, .12); animation: fadeIn .15s ease both; }
+        .msg-error:not(:empty), .msg-success:not(:empty), .modal-error { border-radius: var(--radius-sm); }
+        .msg-error:not(:empty), .modal-error { color: var(--negative); background: #F4E8E7; border-color: #D7B4B1; }
+        .msg-success:not(:empty) { color: var(--positive); background: #E7F0EB; border-color: #AFC8BA; }
+        .field-invalid { border-color: var(--negative) !important; box-shadow: 0 0 0 2px rgba(161, 73, 73, .12) !important; }
+        .pane-view.active { animation: fadeIn .12s ease both; }
+
+        @media (max-width: 650px) {
+            .auth-box { border-radius: var(--radius-md); }
+            .modal { border-radius: var(--radius-md) var(--radius-md) 0 0; animation: fadeIn .15s ease both; }
+        }
     </style>
 </head>
 <body>
@@ -833,52 +1159,71 @@
     <div class="auth-overlay" id="authScreen">
         
         <div class="auth-box" id="loginBox">
-            <h2 class="auth-title">Planilha Financeira</h2>
+            <div class="auth-brand"><span class="brand-mark">CF</span><span>Controle Financeiro</span></div>
+            <h1 class="auth-title">Bem-vindo de volta</h1>
+            <p class="auth-subtitle">Organize sua vida financeira com clareza.</p>
             <div id="loginSuccessMsg" class="msg-success"></div>
             
             <div class="form-row">
-                <input type="email" id="authEmail" placeholder="E-mail">
+                <label for="authEmail">E-mail</label>
+                <input type="email" id="authEmail" placeholder="voce@exemplo.com" autocomplete="email" inputmode="email">
             </div>
             <div class="form-row">
-                <input type="password" id="authPassword" placeholder="Senha">
+                <label for="authPassword">Senha</label>
+                <input type="password" id="authPassword" placeholder="Digite sua senha" autocomplete="current-password">
             </div>
             
-            <button class="auth-btn-primary" onclick="handleLogin()">Entrar</button>
+            <button class="auth-btn-primary" id="loginBtn" onclick="handleLogin()">Entrar na minha conta</button>
+            <button class="auth-link" onclick="handlePasswordReset()">Esqueci minha senha</button>
             <button class="auth-btn-secondary" onclick="toggleAuthView('signup')">Criar nova conta</button>
             
-            <div id="authError" class="msg-error"></div>
+            <div id="authError" class="msg-error" role="alert" aria-live="polite"></div>
             
-            <button class="auth-btn-visitor" onclick="enterAsVisitor()">Entrar como Visitante (Não salva)</button>
+            <button class="auth-btn-visitor" onclick="enterAsVisitor()">Explorar uma demonstração</button>
+            <p class="visitor-note">Os dados da demonstração não são salvos.</p>
+            <div class="privacy-promise"><span>◈</span><span>Seus lançamentos e notas pessoais não aparecem no painel administrativo. <a href="privacidade.html" target="_blank" rel="noopener">Entenda como protegemos seus dados</a>.</span></div>
         </div>
 
         <div class="auth-box hidden" id="signupBox">
-            <h2 class="auth-title">Criar Nova Conta</h2>
+            <div class="auth-brand"><span class="brand-mark">CF</span><span>Controle Financeiro</span></div>
+            <h1 class="auth-title">Crie sua conta</h1>
+            <p class="auth-subtitle">Comece agora. Leva menos de um minuto.</p>
             
             <div class="form-row">
-                <input type="text" id="regUser" placeholder="Seu Nome">
+                <label for="regUser">Seu nome</label>
+                <input type="text" id="regUser" placeholder="Como podemos chamar você?" autocomplete="name">
             </div>
             <div class="form-row">
-                <input type="email" id="regEmail" placeholder="E-mail">
+                <label for="regEmail">E-mail</label>
+                <input type="email" id="regEmail" placeholder="voce@exemplo.com" autocomplete="email" inputmode="email">
             </div>
             <div class="two-col">
                 <div class="form-row">
-                    <input type="password" id="regPass" placeholder="Senha (min. 6)">
+                    <label for="regPass">Senha</label>
+                    <input type="password" id="regPass" placeholder="Mínimo de 6 caracteres" autocomplete="new-password">
                 </div>
                 <div class="form-row">
-                    <input type="password" id="regPassConfirm" placeholder="Repita a Senha">
+                    <label for="regPassConfirm">Confirmar senha</label>
+                    <input type="password" id="regPassConfirm" placeholder="Repita sua senha" autocomplete="new-password">
                 </div>
             </div>
             <div class="form-row">
+                <label for="regTheme">Aparência inicial</label>
                 <select id="regTheme">
-                    <option value="light">Modo Claro</option>
                     <option value="dark">Modo Escuro</option>
+                    <option value="light" selected>Modo Claro</option>
                 </select>
             </div>
+
+            <label class="legal-consent" for="regLegalConsent">
+                <input type="checkbox" id="regLegalConsent">
+                <span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> e declaro que li a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.</span>
+            </label>
             
-            <button class="auth-btn-primary" onclick="executeSignup()">Cadastrar</button>
+            <button class="auth-btn-primary" id="signupBtn" onclick="executeSignup()">Criar minha conta</button>
             <button class="auth-btn-secondary" onclick="toggleAuthView('login')">Voltar</button>
             
-            <div id="signupError" class="msg-error"></div>
+            <div id="signupError" class="msg-error" role="alert" aria-live="polite"></div>
         </div>
     </div>
 
@@ -904,13 +1249,15 @@
             <div class="topbar">
                 <div class="topbar-title">
                     <button class="icon-btn" id="mobileMenuBtn" onclick="document.getElementById('sidebar').classList.add('active')">☰</button>
-                    Planilha 
+                    <span class="brand-mark brand-mark-small">F</span>
+                    <span class="desktop-brand">Controle Financeiro</span>
                     <span id="userNameDisplay" class="user-welcome"></span>
                     <span id="visitorBadge" class="visitor-badge hidden">Visitante</span>
                 </div>
                 
                 <div style="display:flex; align-items:center; gap: 10px;">
-                    <button id="themeToggle" class="icon-btn" title="Alternar Tema">🌓</button>
+                    <span class="plan-badge" id="planBadge">Plano gratuito</span>
+                    <button id="themeToggle" class="icon-btn" title="Alternar tema" aria-label="Alternar tema">☀</button>
                     <button class="logout-btn" id="topbarLogoutBtn" onclick="handleLogout()">Sair</button>
                 </div>
                 
@@ -926,6 +1273,7 @@
                     <button class="tab active" data-pane="visao">Visão Geral</button>
                     <button class="tab" data-pane="transacoes">Transações</button>
                     <button class="tab" data-pane="fixos">Gastos Fixos</button>
+                    <button class="tab" data-pane="notas">Bloco de notas</button>
                     <button class="tab hidden" id="tabEvento" data-pane="evento">Evento</button>
                 </div>
             </div>
@@ -971,7 +1319,14 @@
                     <div class="section">
                         <div class="section-header">
                             <span class="section-title">Todas as Transações</span>
-                            <button class="add-btn" id="addTransBtn">+ Adicionar</button>
+                            <div class="section-actions">
+                                <label class="search-field" aria-label="Buscar transações">
+                                    <span>⌕</span>
+                                    <input type="search" id="transactionSearch" placeholder="Buscar" autocomplete="off">
+                                </label>
+                                <button class="add-btn" id="exportTransBtn" title="Exportar mês em CSV">⇩ Exportar</button>
+                                <button class="add-btn add-btn-primary" id="addTransBtn">+ Adicionar</button>
+                            </div>
                         </div>
                         
                         <div id="transCards"></div>
@@ -1003,6 +1358,25 @@
                     </div>
                 </div>
 
+                <div id="pane-notas" class="pane-view">
+                    <div class="section">
+                        <div class="section-header">
+                            <div>
+                                <span class="section-title">Bloco de notas</span>
+                                <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">Anotações pessoais salvas na sua conta.</div>
+                            </div>
+                            <div class="section-actions">
+                                <label class="search-field" aria-label="Buscar notas">
+                                    <span>⌕</span>
+                                    <input type="search" id="noteSearch" placeholder="Buscar notas" autocomplete="off">
+                                </label>
+                                <button class="add-btn add-btn-primary" id="addNoteBtn">+ Nova nota</button>
+                            </div>
+                        </div>
+                        <div class="notes-grid" id="notesGrid"></div>
+                    </div>
+                </div>
+
                 <div id="pane-evento" class="pane-view">
                     <div class="summary-grid" id="evtSummaryGrid"></div>
                     
@@ -1022,19 +1396,27 @@
                         </table>
                     </div>
                 </div>
+
+                <footer class="legal-footer">
+                    <span>© 2026 Controle Financeiro</span>
+                    <a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a>
+                    <a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a>
+                    <span>Seus dados financeiros e notas não são exibidos à administração.</span>
+                </footer>
                 
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal-overlay hidden" id="modalOverlay"></div>
+<div class="modal-overlay hidden" id="modalOverlay" role="dialog" aria-modal="true"></div>
+<div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
 
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDrM-SLC48LHS3KwJjCe0DOIBHLrCggqcg",
@@ -1056,10 +1438,23 @@
     let currentUser = null;
     let currentFamilyId = null; 
     let isVisitor = false;
+    let accountCreationInProgress = false;
     let unsubscribers = []; 
 
     const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-    const CAT_COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#14B8A6', '#F43F5E', '#06B6D4'];
+    const CAT_COLORS = ['#F59E0B', '#10B981', '#3B82F6', '#0369A1', '#BE185D', '#0F766E', '#E11D48', '#0891B2', '#65A30D', '#EA580C', '#1D4ED8', '#475569', '#0EA5E9', '#CA8A04', '#16A34A', '#DC2626'];
+    const DEFAULT_CATEGORIES = [
+        {name:'Alimentação', color:'#22C55E'}, {name:'Supermercado', color:'#10B981'},
+        {name:'Moradia', color:'#0369A1'}, {name:'Contas', color:'#1D4ED8'},
+        {name:'Transporte', color:'#3B82F6'}, {name:'Saúde', color:'#EF4444'},
+        {name:'Educação', color:'#F59E0B'}, {name:'Lazer', color:'#EC4899'},
+        {name:'Assinaturas', color:'#2563EB'}, {name:'Investimentos', color:'#14B8A6'},
+        {name:'Dívidas', color:'#F97316'}, {name:'Pets', color:'#84CC16'},
+        {name:'Viagens', color:'#06B6D4'}, {name:'Presentes', color:'#BE123C'},
+        {name:'Impostos', color:'#EAB308'}, {name:'Salário', color:'#22C55E'},
+        {name:'Freelance', color:'#0EA5E9'}, {name:'Outros', color:'#64748B'}
+    ];
+    const LEGAL_VERSION = '2026-10-01';
     
     // Categorias controladas dinamicamente
     let CATS = [];
@@ -1071,17 +1466,91 @@
     let fixos = [];
     let events = [];
     let eventExpenses = [];
+    let notes = [];
     
     let selEvt = null;
     let modal = { type: null, editId: null };
     let activeCategoryPane = 'expenses';
+    let transactionSearch = '';
+    let noteSearch = '';
+    let dialogResolver = null;
+
+    function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    }
+
+    function todayISO() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        return new Date(now.getTime() - offset).toISOString().slice(0, 10);
+    }
+
+    function defaultCategories() {
+        return DEFAULT_CATEGORIES.map(category => ({ ...category }));
+    }
+
+    function mergeDefaultCategories(saved = []) {
+        const current = Array.isArray(saved) ? saved.filter(c => c && c.name) : [];
+        const names = new Set(current.map(c => String(c.name).toLocaleLowerCase('pt-BR')));
+        return [...current, ...DEFAULT_CATEGORIES.filter(c => !names.has(c.name.toLocaleLowerCase('pt-BR'))).map(c => ({ ...c }))];
+    }
+
+    function showToast(message, type = 'success', duration = 3600) {
+        const region = document.getElementById('toastRegion');
+        if (!region) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        const symbols = { success: '✓', error: '!', info: 'i' };
+        toast.innerHTML = `<span class="toast-symbol">${symbols[type] || 'i'}</span><span class="toast-message">${escapeHTML(message)}</span><button class="toast-close" aria-label="Fechar">×</button>`;
+        const remove = () => {
+            toast.classList.add('leaving');
+            setTimeout(() => toast.remove(), 220);
+        };
+        toast.querySelector('.toast-close').addEventListener('click', remove);
+        region.appendChild(toast);
+        setTimeout(remove, duration);
+    }
+
+    function setButtonLoading(button, loading) {
+        if (!button) return;
+        button.classList.toggle('btn-loading', loading);
+        button.disabled = loading;
+        button.setAttribute('aria-busy', String(loading));
+    }
+
+    function firebaseMessage(error, context = 'operação') {
+        const messages = {
+            'auth/invalid-email': 'Digite um e-mail válido.',
+            'auth/missing-password': 'Digite sua senha para continuar.',
+            'auth/invalid-credential': 'E-mail ou senha incorretos.',
+            'auth/user-disabled': 'Esta conta foi desativada. Fale com o suporte.',
+            'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+            'auth/network-request-failed': 'Sem conexão com a internet. Verifique sua rede e tente novamente.',
+            'auth/email-already-in-use': 'Já existe uma conta com este e-mail.',
+            'auth/weak-password': 'Use uma senha mais forte, com pelo menos 6 caracteres.',
+            'permission-denied': 'Você não tem permissão para realizar esta ação.',
+            'unavailable': 'O serviço está temporariamente indisponível. Tente novamente em instantes.'
+        };
+        return messages[error?.code] || `Não foi possível concluir a ${context}. Tente novamente.`;
+    }
+
+    function showModalError(message, fieldId) {
+        const el = document.getElementById('modalError');
+        if (el) { el.textContent = message; el.classList.add('visible'); }
+        document.querySelectorAll('.field-invalid').forEach(field => field.classList.remove('field-invalid'));
+        const field = fieldId ? document.getElementById(fieldId) : null;
+        if (field) { field.classList.add('field-invalid'); field.focus(); }
+        return false;
+    }
 
 
     // ==========================================
     // SISTEMA DE CATEGORIAS DINÂMICAS
     // ==========================================
-    function normalizeCategoryName(name) { 
-        return (name || '').trim().toLowerCase().split(/\s+/).filter(Boolean).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '); 
+    function normalizeCategoryName(name) {
+        return String(name || '').trim().replace(/\s+/g, ' ').slice(0, 36)
+            .toLocaleLowerCase('pt-BR')
+            .replace(/(^|[\s/-])\p{L}/gu, letter => letter.toLocaleUpperCase('pt-BR'));
     }
     
     function findCategoryByName(name) { 
@@ -1098,24 +1567,38 @@
         CATS = newCats;
         renderAll();
         if (!isVisitor) {
-            try { await setDoc(doc(db, "familySettings", currentFamilyId), { categories: newCats }, { merge: true }); } catch (e) {}
+            try {
+                await setDoc(doc(db, "familySettings", currentFamilyId), { categories: newCats, categoriesVersion: 2 }, { merge: true });
+            } catch (error) {
+                showToast(firebaseMessage(error, 'alteração das categorias'), 'error');
+                throw error;
+            }
         }
     }
 
-    window.addNewCategory = function() {
-        const rawName = prompt("Qual o nome da nova categoria?");
+    window.addNewCategory = async function() {
+        const rawName = await openTextDialog({
+            title: 'Nova categoria',
+            label: 'Nome da categoria',
+            placeholder: 'Ex.: Academia',
+            confirmLabel: 'Adicionar categoria'
+        });
         const normalized = normalizeCategoryName(rawName);
         
         if (!normalized) return '';
-        if (findCategoryByName(normalized)) { 
-            alert("Esta categoria já existe!"); 
-            return findCategoryByName(normalized).name; 
+        const existing = findCategoryByName(normalized);
+        if (existing) {
+            showToast('Essa categoria já existe.', 'info');
+            return existing.name;
         }
         
         const color = CAT_COLORS[CATS.length % CAT_COLORS.length];
         const newCats = [...CATS, { name: normalized, color }];
         
-        saveCatsToDB(newCats);
+        try {
+            await saveCatsToDB(newCats);
+            showToast(`Categoria “${normalized}” adicionada.`);
+        } catch (_) { return ''; }
         return normalized;
     }
 
@@ -1123,10 +1606,10 @@
         const reservedOther = 'Outros';
         const rows = getSortedCats().map(c => `
             <div class="cat-manage-item">
-                <div class="cat-manage-name"><span class="cat-dot" style="background:${c.color}"></span>${c.name}</div>
+                <div class="cat-manage-name"><span class="cat-dot" style="background:${escapeHTML(c.color)}"></span>${escapeHTML(c.name)}</div>
                 <div class="actions">
-                    <button class="icon-btn" onclick="renameCategory('${c.name.replace(/'/g, "\\'")}')" title="Renomear">✎</button>
-                    <button class="icon-btn" ${c.name === reservedOther ? 'disabled style="opacity:.35;cursor:not-allowed"' : ''} onclick="${c.name === reservedOther ? '' : `removeCategory('${c.name.replace(/'/g, "\\'")}')`}" title="Excluir">✕</button>
+                    <button class="icon-btn" onclick="renameCategory(decodeURIComponent('${encodeURIComponent(c.name)}'))" title="Renomear" aria-label="Renomear ${escapeHTML(c.name)}">✎</button>
+                    <button class="icon-btn" ${c.name === reservedOther ? 'disabled' : ''} onclick="${c.name === reservedOther ? '' : `removeCategory(decodeURIComponent('${encodeURIComponent(c.name)}'))`}" title="Excluir" aria-label="Excluir ${escapeHTML(c.name)}">✕</button>
                 </div>
             </div>
         `).join('');
@@ -1142,12 +1625,17 @@
     }
 
     window.renameCategory = async function(oldName) {
-        const raw = prompt("Novo nome da categoria:", oldName);
+        const raw = await openTextDialog({
+            title: 'Renomear categoria',
+            label: 'Novo nome',
+            value: oldName,
+            confirmLabel: 'Salvar alteração'
+        });
         const normalized = normalizeCategoryName(raw);
         
         if (!normalized || normalized === oldName) return;
-        if (findCategoryByName(normalized)) { 
-            alert("Já existe uma categoria com esse nome."); 
+        if (findCategoryByName(normalized)) {
+            showToast('Já existe uma categoria com esse nome.', 'error');
             return; 
         }
         
@@ -1158,21 +1646,27 @@
         newCats[idx] = { ...newCats[idx], name: normalized };
         
         // Atualiza todas as transações vinculadas a este nome
-        if (!isVisitor) {
-             transactions.forEach(t => { if(t.cat === oldName) updateDoc(doc(db, "transactions", t.id), {cat: normalized}); });
-             fixos.forEach(f => { if(f.cat === oldName) updateDoc(doc(db, "fixos", f.id), {cat: normalized}); });
-        } else {
-             transactions = transactions.map(t => t.cat === oldName ? {...t, cat:normalized} : t);
-             fixos = fixos.map(f => f.cat === oldName ? {...f, cat:normalized} : f);
+        try {
+            if (!isVisitor) {
+                await Promise.all([
+                    ...transactions.filter(t => t.cat === oldName).map(t => updateDoc(doc(db, "transactions", t.id), {cat: normalized})),
+                    ...fixos.filter(f => f.cat === oldName).map(f => updateDoc(doc(db, "fixos", f.id), {cat: normalized}))
+                ]);
+            } else {
+                transactions = transactions.map(t => t.cat === oldName ? {...t, cat:normalized} : t);
+                fixos = fixos.map(f => f.cat === oldName ? {...f, cat:normalized} : f);
+            }
+            await saveCatsToDB(newCats);
+            showToast('Categoria renomeada com sucesso.');
+            openCategoryManager();
+        } catch (error) {
+            showToast(firebaseMessage(error, 'alteração da categoria'), 'error');
         }
-        
-        await saveCatsToDB(newCats);
-        openCategoryManager();
     }
 
     window.removeCategory = async function(name) {
-        if (name === 'Outros') { 
-            alert('A categoria "Outros" não pode ser apagada, pois é a categoria padrão.'); 
+        if (name === 'Outros') {
+            showToast('A categoria “Outros” é necessária e não pode ser excluída.', 'info');
             return; 
         }
         
@@ -1181,30 +1675,36 @@
             ? `Apagar a categoria "${name}"? Os itens vinculados serão movidos automaticamente para a categoria "Outros".`
             : `Tem certeza que deseja apagar a categoria "${name}"?`;
             
-        if (!confirm(msg)) return;
+        if (!await confirmAction({ title: 'Excluir categoria?', message: msg, confirmLabel: 'Excluir categoria' })) return;
         
         const target = 'Outros';
         
-        if (!isVisitor) {
-             transactions.forEach(t => { if(t.cat === name) updateDoc(doc(db, "transactions", t.id), {cat: target}); });
-             fixos.forEach(f => { if(f.cat === name) updateDoc(doc(db, "fixos", f.id), {cat: target}); });
-        } else {
-             transactions = transactions.map(t => t.cat === name ? {...t, cat:target} : t);
-             fixos = fixos.map(f => f.cat === name ? {...f, cat:target} : f);
-        }
+        try {
+            if (!isVisitor) {
+                await Promise.all([
+                    ...transactions.filter(t => t.cat === name).map(t => updateDoc(doc(db, "transactions", t.id), {cat: target})),
+                    ...fixos.filter(f => f.cat === name).map(f => updateDoc(doc(db, "fixos", f.id), {cat: target}))
+                ]);
+            } else {
+                transactions = transactions.map(t => t.cat === name ? {...t, cat:target} : t);
+                fixos = fixos.map(f => f.cat === name ? {...f, cat:target} : f);
+            }
 
-        const newCats = CATS.filter(c => c.name !== name);
-        await saveCatsToDB(newCats);
-        openCategoryManager();
+            await saveCatsToDB(CATS.filter(c => c.name !== name));
+            showToast('Categoria excluída.');
+            openCategoryManager();
+        } catch (error) {
+            showToast(firebaseMessage(error, 'exclusão da categoria'), 'error');
+        }
     }
 
-    window.quickAddCategory = function(selectId) {
-        const createdName = window.addNewCategory();
+    window.quickAddCategory = async function(selectId) {
+        const createdName = await window.addNewCategory();
         if (!createdName) return;
         
         const select = document.getElementById(selectId);
         if (select) {
-            select.innerHTML = getSortedCats().map(c => `<option value="${c.name}"${createdName === c.name ? ' selected' : ''}>${c.name}</option>`).join('');
+            select.innerHTML = getSortedCats().map(c => `<option value="${escapeHTML(c.name)}"${createdName === c.name ? ' selected' : ''}>${escapeHTML(c.name)}</option>`).join('');
             select.value = createdName;
         }
     };
@@ -1232,6 +1732,7 @@
         fixos = []; 
         events = []; 
         eventExpenses = [];
+        notes = [];
         
         unsubscribers.forEach(unsub => unsub()); 
         unsubscribers = [];
@@ -1241,6 +1742,7 @@
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            if (accountCreationInProgress) return;
             currentUser = user;
             isVisitor = false;
             
@@ -1254,22 +1756,33 @@
                 
                 if (userDoc.exists()) {
                     const data = userDoc.data();
-                    
-                    if (data.theme === 'dark') {
-                        document.body.classList.add('dark-theme');
-                    } else {
-                        document.body.classList.remove('dark-theme');
+
+                    if (data.accountDisabled === true) {
+                        await signOut(auth);
+                        toggleAuthView('login');
+                        document.getElementById('authError').innerText = 'Esta conta está bloqueada. Entre em contato com o suporte.';
+                        return;
                     }
+                    
+                    document.body.classList.toggle('dark-theme', data.theme === 'dark');
+                    localStorage.setItem('finance-theme', data.theme === 'dark' ? 'dark' : 'light');
+                    updateThemeButton();
                     
                     currentFamilyId = data.familyId || user.uid; 
                     
                     if (data.username) {
                         document.getElementById('userNameDisplay').innerText = `| Olá, ${data.username}`;
                     }
+                    const planNames = { free: 'Plano gratuito', essential: 'Plano Essencial', pro: 'Plano Pro' };
+                    document.getElementById('planBadge').innerText = planNames[data.plan] || 'Plano gratuito';
+                    setDoc(doc(db, 'users', user.uid), { email: user.email, lastSignInAt: serverTimestamp() }, { merge: true })
+                        .catch(error => showToast(firebaseMessage(error, 'atualização do acesso'), 'error'));
                 } else {
                     document.body.classList.remove('dark-theme');
                     currentFamilyId = user.uid; 
                     document.getElementById('userNameDisplay').innerText = "";
+                    document.getElementById('planBadge').innerText = 'Plano gratuito';
+                    updateThemeButton();
                 }
             } catch(e) {
                 currentFamilyId = user.uid;
@@ -1289,39 +1802,83 @@
     });
 
     window.handleLogin = async function() {
-        const e = document.getElementById('authEmail').value;
+        const e = document.getElementById('authEmail').value.trim();
         const p = document.getElementById('authPassword').value;
-        
-        try { 
-            await signInWithEmailAndPassword(auth, e, p); 
-            document.getElementById('authError').innerText = ""; 
-        } catch (error) { 
-            document.getElementById('authError').innerText = "Erro ao entrar. Verifique o e-mail e a senha."; 
+        const errorEl = document.getElementById('authError');
+        const button = document.getElementById('loginBtn');
+        errorEl.innerText = '';
+
+        if (!e) { errorEl.innerText = 'Digite seu e-mail para continuar.'; document.getElementById('authEmail').focus(); return; }
+        if (!/^\S+@\S+\.\S+$/.test(e)) { errorEl.innerText = 'Digite um e-mail válido, como voce@exemplo.com.'; document.getElementById('authEmail').focus(); return; }
+        if (!p) { errorEl.innerText = 'Digite sua senha para continuar.'; document.getElementById('authPassword').focus(); return; }
+
+        setButtonLoading(button, true);
+        try {
+            await signInWithEmailAndPassword(auth, e, p);
+        } catch (error) {
+            errorEl.innerText = firebaseMessage(error, 'entrada');
+        } finally {
+            setButtonLoading(button, false);
+        }
+    }
+
+    window.handlePasswordReset = async function() {
+        const currentEmail = document.getElementById('authEmail').value.trim();
+        const email = await openTextDialog({
+            title: 'Recuperar senha',
+            label: 'E-mail da sua conta',
+            value: currentEmail,
+            placeholder: 'voce@exemplo.com',
+            confirmLabel: 'Enviar link'
+        });
+        if (!email) return;
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+            showToast('Digite um e-mail válido para recuperar sua senha.', 'error');
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, email.trim());
+            showToast('Link de recuperação enviado. Confira também a caixa de spam.', 'success', 6000);
+        } catch (error) {
+            showToast(firebaseMessage(error, 'recuperação de senha'), 'error');
         }
     }
 
     window.executeSignup = async function() {
-        const user = document.getElementById('regUser').value;
-        const email = document.getElementById('regEmail').value;
+        const user = document.getElementById('regUser').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
         const pass = document.getElementById('regPass').value;
         const passConfirm = document.getElementById('regPassConfirm').value;
         const themePref = document.getElementById('regTheme').value;
+        const legalConsent = document.getElementById('regLegalConsent');
+        const errorEl = document.getElementById('signupError');
+        const button = document.getElementById('signupBtn');
+        errorEl.innerText = '';
 
         if (!user || !email || !pass) { 
-            document.getElementById('signupError').innerText = "Por favor, preencha todos os campos."; 
+            errorEl.innerText = "Preencha nome, e-mail e senha para continuar."; 
             return; 
         }
+        if (!/^\S+@\S+\.\S+$/.test(email)) { errorEl.innerText = 'Digite um e-mail válido.'; document.getElementById('regEmail').focus(); return; }
         
         if (pass !== passConfirm) { 
-            document.getElementById('signupError').innerText = "As senhas não são iguais."; 
+            errorEl.innerText = "As senhas não coincidem. Digite a mesma senha nos dois campos."; 
             return; 
         }
         
         if (pass.length < 6) { 
-            document.getElementById('signupError').innerText = "A senha deve ter no mínimo 6 caracteres."; 
+            errorEl.innerText = "A senha precisa ter pelo menos 6 caracteres."; 
             return; 
         }
+        if (!legalConsent.checked) {
+            errorEl.innerText = 'Para criar sua conta, aceite os Termos de Uso e confirme a leitura da Política de Privacidade.';
+            legalConsent.closest('.legal-consent').classList.add('field-invalid');
+            legalConsent.focus();
+            return;
+        }
 
+        setButtonLoading(button, true);
+        accountCreationInProgress = true;
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
             const newUser = userCredential.user;
@@ -1330,8 +1887,17 @@
                 userId: newUser.uid,
                 familyId: newUser.uid, 
                 username: user,
+                email,
                 theme: themePref,
-                createdAt: new Date().toISOString()
+                plan: 'free',
+                subscriptionStatus: 'trialing',
+                createdAt: serverTimestamp(),
+                termsAcceptedAt: serverTimestamp(),
+                termsAcceptedAtClient: new Date().toISOString(),
+                termsVersion: LEGAL_VERSION,
+                privacyNoticeAcknowledgedAt: serverTimestamp(),
+                privacyVersion: LEGAL_VERSION,
+                consentSource: 'signup-web'
             });
 
             await signOut(auth);
@@ -1341,24 +1907,34 @@
             document.getElementById('authPassword').value = "";
             document.getElementById('loginSuccessMsg').innerText = "Conta criada com sucesso! Faça login para começar.";
 
-        } catch (error) { 
-            if (error.code === 'auth/email-already-in-use') {
-                document.getElementById('signupError').innerText = "Este e-mail já está sendo usado.";
-            } else {
-                document.getElementById('signupError').innerText = "Erro ao criar a conta. Tente novamente."; 
-            }
+        } catch (error) {
+            errorEl.innerText = firebaseMessage(error, 'criação da conta');
+        } finally {
+            accountCreationInProgress = false;
+            setButtonLoading(button, false);
         }
+    }
+
+    function updateThemeButton() {
+        const button = document.getElementById('themeToggle');
+        if (!button) return;
+        const isDark = document.body.classList.contains('dark-theme');
+        button.textContent = isDark ? '☀' : '☾';
+        button.title = isDark ? 'Usar tema claro' : 'Usar tema escuro';
+        button.setAttribute('aria-label', button.title);
     }
 
     document.getElementById('themeToggle').addEventListener('click', async () => { 
         const isDark = document.body.classList.toggle('dark-theme'); 
+        localStorage.setItem('finance-theme', isDark ? 'dark' : 'light');
+        updateThemeButton();
         
         if (currentUser && !isVisitor) {
             try { 
                 await setDoc(doc(db, "users", currentUser.uid), { 
                     theme: isDark ? 'dark' : 'light' 
                 }, { merge: true }); 
-            } catch(e) {}
+            } catch(error) { showToast(firebaseMessage(error, 'alteração do tema'), 'error'); }
         }
     });
 
@@ -1377,15 +1953,11 @@
         isVisitor = true;
         currentUser = null;
         currentFamilyId = 'visitor-local';
-        document.body.classList.remove('dark-theme'); 
+        document.body.classList.remove('dark-theme');
+        updateThemeButton();
         
         // Categorias Padrão para o Visitante
-        CATS = [
-            {name:'Alimentação', color:'#1D9E75'}, {name:'Transporte', color:'#378ADD'},
-            {name:'Moradia', color:'#534AB7'}, {name:'Saúde', color:'#D85A30'},
-            {name:'Lazer', color:'#D4537E'}, {name:'Educação', color:'#BA7517'},
-            {name:'Outros', color:'#888780'}
-        ];
+        CATS = defaultCategories();
         
         clearData(); 
         
@@ -1394,6 +1966,7 @@
         document.getElementById('visitorBadge').classList.remove('hidden');
         document.getElementById('userNameDisplay').innerText = ""; 
         document.getElementById('topbarLogoutBtn').innerText = "Fazer Login";
+        document.getElementById('planBadge').innerText = 'Demonstração';
     }
 
     // ==========================================
@@ -1401,46 +1974,68 @@
     // ==========================================
     function setupRealtimeListeners(fId) {
         clearData();
+
+        if (currentUser && !isVisitor) {
+            unsubscribers.push(onSnapshot(doc(db, 'users', currentUser.uid), snapshot => {
+                if (!snapshot.exists()) return;
+                const profile = snapshot.data();
+                if (profile.accountDisabled === true) {
+                    signOut(auth).then(() => {
+                        toggleAuthView('login');
+                        document.getElementById('authError').innerText = 'Esta conta foi bloqueada. Entre em contato com o suporte.';
+                    });
+                    return;
+                }
+                const planNames = { free: 'Plano gratuito', essential: 'Plano Essencial', pro: 'Plano Pro' };
+                document.getElementById('planBadge').innerText = planNames[profile.plan] || 'Plano gratuito';
+            }, error => showToast(firebaseMessage(error, 'verificação da conta'), 'error')));
+        }
         
         // Puxa as Categorias da Família (Se existirem)
         unsubscribers.push(onSnapshot(doc(db, "familySettings", fId), (docSnap) => {
             if (docSnap.exists() && docSnap.data().categories) {
-                CATS = docSnap.data().categories;
+                const settings = docSnap.data();
+                CATS = settings.categoriesVersion >= 2 ? settings.categories : mergeDefaultCategories(settings.categories);
+                if (settings.categoriesVersion !== 2) {
+                    setDoc(doc(db, "familySettings", fId), { categories: CATS, categoriesVersion: 2 }, { merge: true })
+                        .catch(error => showToast(firebaseMessage(error, 'atualização das categorias'), 'error'));
+                }
             } else {
-                CATS = [
-                    {name:'Alimentação', color:'#1D9E75'}, {name:'Transporte', color:'#378ADD'},
-                    {name:'Moradia', color:'#534AB7'}, {name:'Saúde', color:'#D85A30'},
-                    {name:'Lazer', color:'#D4537E'}, {name:'Educação', color:'#BA7517'},
-                    {name:'Outros', color:'#888780'}
-                ];
+                CATS = defaultCategories();
             }
             renderAll();
-        }));
+        }, error => showToast(firebaseMessage(error, 'sincronização das categorias'), 'error')));
 
         const qTrans = query(collection(db, "transactions"), where("familyId", "==", fId));
         const qFixos = query(collection(db, "fixos"), where("familyId", "==", fId));
         const qEvents = query(collection(db, "events"), where("familyId", "==", fId));
         const qExps = query(collection(db, "eventExpenses"), where("familyId", "==", fId));
+        const qNotes = query(collection(db, "notes"), where("familyId", "==", fId));
 
         unsubscribers.push(onSnapshot(qTrans, (snap) => { 
-            transactions = snap.docs.map(d => ({id: d.id, ...d.data()})); 
+            transactions = snap.docs.map(d => ({id: d.id, ...d.data(), valor: Number(d.data().valor) || 0})); 
             renderAll(); 
-        }));
+        }, error => showToast(firebaseMessage(error, 'sincronização das transações'), 'error')));
         
         unsubscribers.push(onSnapshot(qFixos, (snap) => { 
-            fixos = snap.docs.map(d => ({id: d.id, ...d.data()})); 
+            fixos = snap.docs.map(d => ({id: d.id, ...d.data(), valor: Number(d.data().valor) || 0, dia: Number(d.data().dia) || 1})); 
             renderAll(); 
-        }));
+        }, error => showToast(firebaseMessage(error, 'sincronização dos gastos fixos'), 'error')));
         
         unsubscribers.push(onSnapshot(qEvents, (snap) => { 
-            events = snap.docs.map(d => ({id: d.id, ...d.data()})); 
+            events = snap.docs.map(d => ({id: d.id, ...d.data(), valor: Number(d.data().valor) || 0})); 
             renderAll(); 
-        }));
+        }, error => showToast(firebaseMessage(error, 'sincronização dos eventos'), 'error')));
         
         unsubscribers.push(onSnapshot(qExps, (snap) => { 
-            eventExpenses = snap.docs.map(d => ({id: d.id, ...d.data()})); 
+            eventExpenses = snap.docs.map(d => ({id: d.id, ...d.data(), valor: Number(d.data().valor) || 0})); 
             renderAll(); 
-        }));
+        }, error => showToast(firebaseMessage(error, 'sincronização dos gastos de eventos'), 'error')));
+
+        unsubscribers.push(onSnapshot(qNotes, (snap) => {
+            notes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderNotes();
+        }, error => showToast(firebaseMessage(error, 'sincronização das notas'), 'error')));
     }
 
 
@@ -1452,14 +2047,20 @@
     }
 
     window.saveTrans = async function() {
+        const saveButton = document.querySelector('.modal .btn-save');
         const formData = { 
             date: document.getElementById('f_date').value, 
-            desc: document.getElementById('f_desc').value, 
+            desc: document.getElementById('f_desc').value.trim(), 
             cat: document.getElementById('f_cat').value, 
             tipo: document.getElementById('f_tipo').value, 
             sub: document.getElementById('f_sub').value, 
-            valor: parseFloat(document.getElementById('f_valor').value) || 0 
+            valor: Number(document.getElementById('f_valor').value)
         };
+
+        if (!formData.date) return showModalError('Escolha a data da transação.', 'f_date');
+        if (!formData.desc) return showModalError('Digite uma descrição para identificar esta transação.', 'f_desc');
+        if (!formData.cat) return showModalError('Escolha uma categoria.', 'f_cat');
+        if (!Number.isFinite(formData.valor) || formData.valor <= 0) return showModalError('Digite um valor maior que zero.', 'f_valor');
 
         if (isVisitor) { 
             if (modal.editId) { 
@@ -1470,28 +2071,42 @@
             } 
             closeModal(); 
             renderAll(); 
+            showToast(modal.editId ? 'Transação atualizada.' : 'Transação adicionada.');
             return; 
         }
 
         formData.familyId = currentFamilyId; 
         formData.authorId = currentUser.uid; 
         
-        if (modal.editId) {
-            await updateDoc(doc(db, "transactions", modal.editId), formData); 
-        } else {
-            await addDoc(collection(db, "transactions"), formData);
+        setButtonLoading(saveButton, true);
+        try {
+            if (modal.editId) {
+                await updateDoc(doc(db, "transactions", modal.editId), formData); 
+            } else {
+                await addDoc(collection(db, "transactions"), formData);
+            }
+            closeModal();
+            showToast(modal.editId ? 'Transação atualizada.' : 'Transação adicionada.');
+        } catch (error) {
+            showModalError(firebaseMessage(error, 'gravação da transação'));
+        } finally {
+            setButtonLoading(saveButton, false);
         }
-        
-        closeModal();
     };
 
     window.saveFixo = async function() {
+        const saveButton = document.querySelector('.modal .btn-save');
         const formData = { 
-            desc: document.getElementById('ff_desc').value, 
+            desc: document.getElementById('ff_desc').value.trim(), 
             cat: document.getElementById('ff_cat').value, 
-            dia: parseInt(document.getElementById('ff_dia').value) || 1, 
-            valor: parseFloat(document.getElementById('ff_valor').value) || 0 
+            dia: Number(document.getElementById('ff_dia').value), 
+            valor: Number(document.getElementById('ff_valor').value)
         };
+
+        if (!formData.desc) return showModalError('Digite uma descrição para o gasto fixo.', 'ff_desc');
+        if (!formData.cat) return showModalError('Escolha uma categoria.', 'ff_cat');
+        if (!Number.isInteger(formData.dia) || formData.dia < 1 || formData.dia > 31) return showModalError('Informe um dia de vencimento entre 1 e 31.', 'ff_dia');
+        if (!Number.isFinite(formData.valor) || formData.valor <= 0) return showModalError('Digite um valor mensal maior que zero.', 'ff_valor');
 
         if (isVisitor) { 
             if (modal.editId) { 
@@ -1502,27 +2117,40 @@
             } 
             closeModal(); 
             renderAll(); 
+            showToast(modal.editId ? 'Gasto fixo atualizado.' : 'Gasto fixo adicionado.');
             return; 
         }
 
         formData.familyId = currentFamilyId;
         
-        if (modal.editId) {
-            await updateDoc(doc(db, "fixos", modal.editId), formData); 
-        } else {
-            await addDoc(collection(db, "fixos"), formData);
+        setButtonLoading(saveButton, true);
+        try {
+            if (modal.editId) {
+                await updateDoc(doc(db, "fixos", modal.editId), formData); 
+            } else {
+                await addDoc(collection(db, "fixos"), formData);
+            }
+            closeModal();
+            showToast(modal.editId ? 'Gasto fixo atualizado.' : 'Gasto fixo adicionado.');
+        } catch (error) {
+            showModalError(firebaseMessage(error, 'gravação do gasto fixo'));
+        } finally {
+            setButtonLoading(saveButton, false);
         }
-        
-        closeModal();
     };
 
     window.saveEvt = async function() {
+        const saveButton = document.querySelector('.modal .btn-save');
         const formData = { 
-            name: document.getElementById('fe_name').value, 
+            name: document.getElementById('fe_name').value.trim(), 
             date: document.getElementById('fe_date').value, 
-            valor: parseFloat(document.getElementById('fe_valor').value) || 0, 
-            notas: document.getElementById('fe_notas').value 
+            valor: Number(document.getElementById('fe_valor').value), 
+            notas: document.getElementById('fe_notas').value.trim()
         };
+
+        if (!formData.name) return showModalError('Digite um nome para o evento.', 'fe_name');
+        if (!formData.date) return showModalError('Escolha a data do evento.', 'fe_date');
+        if (!Number.isFinite(formData.valor) || formData.valor <= 0) return showModalError('Defina um orçamento maior que zero.', 'fe_valor');
 
         if (isVisitor) { 
             if (modal.editId) { 
@@ -1537,32 +2165,44 @@
             document.getElementById('tabEvento').classList.remove('hidden'); 
             document.getElementById('tabEvento').click(); 
             renderAll(); 
+            showToast(modal.editId ? 'Evento atualizado.' : 'Evento criado.');
             return; 
         }
 
         formData.familyId = currentFamilyId;
         
-        if (modal.editId) { 
-            await updateDoc(doc(db, "events", modal.editId), formData); 
-        } else { 
-            const novoEvt = await addDoc(collection(db, "events"), formData); 
-            selEvt = novoEvt.id; 
+        setButtonLoading(saveButton, true);
+        try {
+            if (modal.editId) { 
+                await updateDoc(doc(db, "events", modal.editId), formData); 
+            } else { 
+                const novoEvt = await addDoc(collection(db, "events"), formData); 
+                selEvt = novoEvt.id; 
+            }
+            closeModal(); 
+            document.getElementById('tabEvento').classList.remove('hidden'); 
+            document.getElementById('tabEvento').click();
+            showToast(modal.editId ? 'Evento atualizado.' : 'Evento criado.');
+        } catch (error) {
+            showModalError(firebaseMessage(error, 'gravação do evento'));
+        } finally {
+            setButtonLoading(saveButton, false);
         }
-        
-        closeModal(); 
-        document.getElementById('tabEvento').classList.remove('hidden'); 
-        document.getElementById('tabEvento').click();
     };
 
     window.saveEvtExp = async function() {
         if (!selEvt) return; 
-        
+        const saveButton = document.querySelector('.modal .btn-save');
         const formData = { 
             eventId: selEvt, 
             date: document.getElementById('fex_date').value, 
-            desc: document.getElementById('fex_desc').value, 
-            valor: parseFloat(document.getElementById('fex_valor').value) || 0 
+            desc: document.getElementById('fex_desc').value.trim(), 
+            valor: Number(document.getElementById('fex_valor').value)
         };
+
+        if (!formData.date) return showModalError('Escolha a data do gasto.', 'fex_date');
+        if (!formData.desc) return showModalError('Descreva o que foi pago.', 'fex_desc');
+        if (!Number.isFinite(formData.valor) || formData.valor <= 0) return showModalError('Digite um valor maior que zero.', 'fex_valor');
 
         if (isVisitor) { 
             if (modal.editId) { 
@@ -1573,47 +2213,123 @@
             } 
             closeModal(); 
             renderEventoPane(); 
+            showToast(modal.editId ? 'Gasto atualizado.' : 'Gasto adicionado ao evento.');
             return; 
         }
 
         formData.familyId = currentFamilyId;
         
-        if (modal.editId) {
-            await updateDoc(doc(db, "eventExpenses", modal.editId), formData); 
-        } else {
-            await addDoc(collection(db, "eventExpenses"), formData);
+        setButtonLoading(saveButton, true);
+        try {
+            if (modal.editId) {
+                await updateDoc(doc(db, "eventExpenses", modal.editId), formData); 
+            } else {
+                await addDoc(collection(db, "eventExpenses"), formData);
+            }
+            closeModal();
+            showToast(modal.editId ? 'Gasto atualizado.' : 'Gasto adicionado ao evento.');
+        } catch (error) {
+            showModalError(firebaseMessage(error, 'gravação do gasto'));
+        } finally {
+            setButtonLoading(saveButton, false);
         }
-        
-        closeModal();
+    };
+
+    window.saveNote = async function() {
+        const saveButton = document.querySelector('.modal .btn-save');
+        const isEditing = Boolean(modal.editId);
+        const formData = {
+            title: document.getElementById('fn_title').value.trim(),
+            content: document.getElementById('fn_content').value.trim()
+        };
+
+        if (!formData.title) return showModalError('Digite um título para identificar a nota.', 'fn_title');
+        if (!formData.content) return showModalError('Escreva o conteúdo da nota.', 'fn_content');
+
+        if (isVisitor) {
+            const now = new Date().toISOString();
+            if (isEditing) {
+                const index = notes.findIndex(note => note.id === modal.editId);
+                if (index >= 0) notes[index] = { ...notes[index], ...formData, updatedAt: now };
+            } else {
+                notes.push({ id: generateId(), ...formData, createdAt: now, updatedAt: now });
+            }
+            closeModal();
+            renderNotes();
+            showToast(isEditing ? 'Nota atualizada.' : 'Nota criada.');
+            return;
+        }
+
+        const payload = {
+            ...formData,
+            familyId: currentFamilyId,
+            authorId: currentUser.uid,
+            updatedAt: serverTimestamp()
+        };
+        setButtonLoading(saveButton, true);
+        try {
+            if (isEditing) {
+                await updateDoc(doc(db, 'notes', modal.editId), payload);
+            } else {
+                await addDoc(collection(db, 'notes'), { ...payload, createdAt: serverTimestamp() });
+            }
+            closeModal();
+            showToast(isEditing ? 'Nota atualizada.' : 'Nota criada.');
+        } catch (error) {
+            showModalError(firebaseMessage(error, 'gravação da nota'));
+        } finally {
+            setButtonLoading(saveButton, false);
+        }
+    };
+
+    window.delNote = async function(id) {
+        if (!await confirmAction({ title: 'Excluir nota?', message: 'Esta anotação será removida permanentemente.', confirmLabel: 'Excluir nota' })) return;
+        if (isVisitor) {
+            notes = notes.filter(note => note.id !== id);
+            renderNotes();
+            showToast('Nota excluída.');
+            return;
+        }
+        try {
+            await deleteDoc(doc(db, 'notes', id));
+            showToast('Nota excluída.');
+        } catch (error) {
+            showToast(firebaseMessage(error, 'exclusão da nota'), 'error');
+        }
     };
 
     window.delTrans = async function(id) { 
-        if (!confirm('Você tem certeza que deseja excluir esta transação?')) return; 
+        if (!await confirmAction({ title: 'Excluir transação?', message: 'Essa ação é permanente e a transação deixará de aparecer nos seus totais.', confirmLabel: 'Excluir transação' })) return; 
         
         if (isVisitor) { 
             transactions = transactions.filter(x => x.id !== id); 
             renderAll(); 
+            showToast('Transação excluída.');
             return; 
         } 
-        
-        await deleteDoc(doc(db, "transactions", id)); 
+        try {
+            await deleteDoc(doc(db, "transactions", id));
+            showToast('Transação excluída.');
+        } catch (error) { showToast(firebaseMessage(error, 'exclusão da transação'), 'error'); }
     };
     
     window.delFixo = async function(id) { 
-        if (!confirm('Você tem certeza que deseja excluir este gasto fixo?')) return; 
+        if (!await confirmAction({ title: 'Excluir gasto fixo?', message: 'As projeções futuras deste gasto também serão removidas.', confirmLabel: 'Excluir gasto fixo' })) return; 
         
         if (isVisitor) { 
             fixos = fixos.filter(x => x.id !== id); 
             renderAll(); 
+            showToast('Gasto fixo excluído.');
             return; 
         } 
-        
-        await deleteDoc(doc(db, "fixos", id)); 
+        try {
+            await deleteDoc(doc(db, "fixos", id));
+            showToast('Gasto fixo excluído.');
+        } catch (error) { showToast(firebaseMessage(error, 'exclusão do gasto fixo'), 'error'); }
     };
     
     window.delEvt = async function(id) { 
-        event.stopPropagation(); 
-        if (!confirm('Excluir este evento vai apagar também todos os gastos vinculados a ele. Continuar?')) return; 
+        if (!await confirmAction({ title: 'Excluir evento e gastos?', message: 'Todos os gastos vinculados a este evento também serão apagados. Essa ação não pode ser desfeita.', confirmLabel: 'Excluir tudo' })) return; 
         
         if (isVisitor) { 
             events = events.filter(x => x.id !== id); 
@@ -1624,33 +2340,34 @@
                 document.querySelector('.tab[data-pane="visao"]').click(); 
             } 
             renderAll(); 
+            showToast('Evento e seus gastos foram excluídos.');
             return; 
         } 
-        
-        await deleteDoc(doc(db, "events", id)); 
-        
-        const expToDelete = eventExpenses.filter(x => x.eventId === id); 
-        for (let exp of expToDelete) { 
-            await deleteDoc(doc(db, "eventExpenses", exp.id)); 
-        }
-        
-        if (selEvt === id) { 
-            selEvt = null; 
-            document.getElementById('tabEvento').classList.add('hidden'); 
-            document.querySelector('.tab[data-pane="visao"]').click(); 
-        } 
+        try {
+            await deleteDoc(doc(db, "events", id));
+            await Promise.all(eventExpenses.filter(x => x.eventId === id).map(exp => deleteDoc(doc(db, "eventExpenses", exp.id))));
+            if (selEvt === id) { 
+                selEvt = null; 
+                document.getElementById('tabEvento').classList.add('hidden'); 
+                document.querySelector('.tab[data-pane="visao"]').click(); 
+            }
+            showToast('Evento e seus gastos foram excluídos.');
+        } catch (error) { showToast(firebaseMessage(error, 'exclusão do evento'), 'error'); }
     };
     
     window.delEvtExp = async function(id) { 
-        if (!confirm('Você tem certeza que deseja excluir este gasto do evento?')) return; 
+        if (!await confirmAction({ title: 'Excluir gasto do evento?', message: 'O valor será removido do total deste evento.', confirmLabel: 'Excluir gasto' })) return; 
         
         if (isVisitor) { 
             eventExpenses = eventExpenses.filter(x => x.id !== id); 
             renderEventoPane(); 
+            showToast('Gasto excluído.');
             return; 
         } 
-        
-        await deleteDoc(doc(db, "eventExpenses", id)); 
+        try {
+            await deleteDoc(doc(db, "eventExpenses", id));
+            showToast('Gasto excluído.');
+        } catch (error) { showToast(firebaseMessage(error, 'exclusão do gasto'), 'error'); }
     };
 
 
@@ -1662,23 +2379,23 @@
             <div class="two-col">
                 <div class="form-row">
                     <label>Data</label>
-                    <input type="date" id="f_date" value="${t ? t.date : new Date().toISOString().split('T')[0]}">
+                    <input type="date" id="f_date" value="${t ? escapeHTML(t.date) : todayISO()}" required>
                 </div>
                 <div class="form-row">
                     <label>Valor (R$)</label>
-                    <input type="number" id="f_valor" step="0.01" value="${t ? t.valor : ''}">
+                    <input type="number" id="f_valor" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" value="${t ? escapeHTML(t.valor) : ''}" required>
                 </div>
             </div>
             <div class="form-row">
                 <label>Descrição</label>
-                <input type="text" id="f_desc" value="${t ? t.desc : ''}">
+                <input type="text" id="f_desc" maxlength="80" placeholder="Ex.: Compra do mês" value="${t ? escapeHTML(t.desc) : ''}" required>
             </div>
             <div class="two-col">
                 <div class="form-row">
                     <label>Categoria</label>
                     <div style="display:flex; gap:8px;">
                         <select id="f_cat">
-                            ${getSortedCats().map(c => `<option value="${c.name}"${t && t.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}
+                            ${getSortedCats().map(c => `<option value="${escapeHTML(c.name)}"${t && t.cat === c.name ? ' selected' : ''}>${escapeHTML(c.name)}</option>`).join('')}
                         </select>
                         <button type="button" class="add-btn" onclick="quickAddCategory('f_cat')">+ Nova</button>
                     </div>
@@ -1709,26 +2426,26 @@
         return `
             <div class="form-row">
                 <label>Descrição do Gasto Fixo</label>
-                <input type="text" id="ff_desc" value="${f ? f.desc : ''}">
+                <input type="text" id="ff_desc" maxlength="80" placeholder="Ex.: Aluguel" value="${f ? escapeHTML(f.desc) : ''}" required>
             </div>
             <div class="two-col">
                 <div class="form-row">
                     <label>Categoria</label>
                     <div style="display:flex; gap:8px;">
                         <select id="ff_cat">
-                            ${getSortedCats().map(c => `<option value="${c.name}"${f && f.cat === c.name ? ' selected' : ''}>${c.name}</option>`).join('')}
+                            ${getSortedCats().map(c => `<option value="${escapeHTML(c.name)}"${f && f.cat === c.name ? ' selected' : ''}>${escapeHTML(c.name)}</option>`).join('')}
                         </select>
                         <button type="button" class="add-btn" onclick="quickAddCategory('ff_cat')">+ Nova</button>
                     </div>
                 </div>
                 <div class="form-row">
                     <label>Dia do vencimento</label>
-                    <input type="number" id="ff_dia" min="1" max="31" value="${f ? f.dia : ''}">
+                    <input type="number" id="ff_dia" min="1" max="31" inputmode="numeric" placeholder="10" value="${f ? escapeHTML(f.dia) : ''}" required>
                 </div>
             </div>
             <div class="form-row">
                 <label>Valor Mensal (R$)</label>
-                <input type="number" id="ff_valor" step="0.01" value="${f ? f.valor : ''}">
+                <input type="number" id="ff_valor" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" value="${f ? escapeHTML(f.valor) : ''}" required>
             </div>
             <div class="form-actions">
                 <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -1741,21 +2458,21 @@
         return `
             <div class="form-row">
                 <label>Nome do evento (Ex: Casamento, Viagem)</label>
-                <input type="text" id="fe_name" value="${e ? e.name : ''}">
+                <input type="text" id="fe_name" maxlength="60" placeholder="Ex.: Viagem de férias" value="${e ? escapeHTML(e.name) : ''}" required>
             </div>
             <div class="two-col">
                 <div class="form-row">
                     <label>Data</label>
-                    <input type="date" id="fe_date" value="${e ? e.date : new Date().toISOString().split('T')[0]}">
+                    <input type="date" id="fe_date" value="${e ? escapeHTML(e.date) : todayISO()}" required>
                 </div>
                 <div class="form-row">
                     <label>Orçamento Limite (R$)</label>
-                    <input type="number" id="fe_valor" step="0.01" value="${e ? e.valor : ''}">
+                    <input type="number" id="fe_valor" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" value="${e ? escapeHTML(e.valor) : ''}" required>
                 </div>
             </div>
             <div class="form-row">
                 <label>Notas e Observações</label>
-                <textarea id="fe_notas">${e ? e.notas : ''}</textarea>
+                <textarea id="fe_notas" maxlength="400" rows="3" placeholder="Detalhes, objetivos ou lembretes">${e ? escapeHTML(e.notas) : ''}</textarea>
             </div>
             <div class="form-actions">
                 <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -1769,22 +2486,39 @@
             <div class="two-col">
                 <div class="form-row">
                     <label>Data</label>
-                    <input type="date" id="fex_date" value="${x ? x.date : new Date().toISOString().split('T')[0]}">
+                    <input type="date" id="fex_date" value="${x ? escapeHTML(x.date) : todayISO()}" required>
                 </div>
                 <div class="form-row">
                     <label>Valor (R$)</label>
-                    <input type="number" id="fex_valor" step="0.01" value="${x ? x.valor : ''}">
+                    <input type="number" id="fex_valor" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" value="${x ? escapeHTML(x.valor) : ''}" required>
                 </div>
             </div>
             <div class="form-row">
                 <label>Descrição do que foi pago</label>
-                <input type="text" id="fex_desc" value="${x ? x.desc : ''}">
+                <input type="text" id="fex_desc" maxlength="80" placeholder="Ex.: Passagens" value="${x ? escapeHTML(x.desc) : ''}" required>
             </div>
             <div class="form-actions">
                 <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
                 <button class="btn-save" onclick="saveEvtExp()">Salvar Gasto</button>
             </div>
         `; 
+    }
+
+    function noteForm(note) {
+        return `
+            <div class="form-row">
+                <label for="fn_title">Título</label>
+                <input type="text" id="fn_title" maxlength="80" placeholder="Ex.: Lembretes do mês" value="${note ? escapeHTML(note.title) : ''}" required>
+            </div>
+            <div class="form-row">
+                <label for="fn_content">Anotação</label>
+                <textarea id="fn_content" class="note-form-textarea" maxlength="5000" placeholder="Escreva aqui o que você deseja lembrar..." required>${note ? escapeHTML(note.content) : ''}</textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveNote()">Salvar nota</button>
+            </div>
+        `;
     }
 
 
@@ -1800,6 +2534,32 @@
         if (!d) return ''; 
         const [y,m,day] = d.split('-'); 
         return `${day}/${m}/${y}`; 
+    }
+
+    function csvCell(value) {
+        let text = String(value ?? '');
+        if (/^[=+\-@]/.test(text)) text = `'${text}`;
+        return `"${text.replace(/"/g, '""')}"`;
+    }
+
+    function exportTransactions() {
+        const term = transactionSearch.trim().toLocaleLowerCase('pt-BR');
+        const data = monthTrans().filter(t => !term || [t.desc, t.cat, t.tipo, t.sub, fmt(t.valor)].some(value => String(value || '').toLocaleLowerCase('pt-BR').includes(term)));
+        if (!data.length) return showToast('Não há transações para exportar neste mês.', 'info');
+        const rows = [
+            ['Data', 'Descrição', 'Categoria', 'Tipo', 'Subtipo', 'Valor'],
+            ...data.map(t => [fmtDate(t.date), t.desc, t.cat, t.tipo === 'entrada' ? 'Entrada' : 'Saída', t.sub === 'fixo' ? 'Fixo' : 'Variável', Number(t.valor).toFixed(2).replace('.', ',')])
+        ];
+        const csv = '\ufeff' + rows.map(row => row.map(csvCell).join(';')).join('\r\n');
+        const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `controle-financeiro-${curYear}-${String(curMonth + 1).padStart(2, '0')}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast('Relatório exportado com sucesso.');
     }
 
     function monthTrans() { 
@@ -1865,9 +2625,9 @@
         
         el.innerHTML = sorted.map(c => `
             <div class="cat-row">
-                <span class="cat-name">${c.name}</span>
+                <span class="cat-name">${escapeHTML(c.name)}</span>
                 <div class="bar-wrap">
-                    <div class="bar-fill" style="width:${(bycat[c.name]/total*100).toFixed(1)}%;background:${c.color}"></div>
+                    <div class="bar-fill" style="width:${(bycat[c.name]/total*100).toFixed(1)}%;background:${escapeHTML(c.color)}"></div>
                 </div>
                 <span class="cat-val">${fmt(bycat[c.name])}</span>
             </div>
@@ -1894,10 +2654,10 @@
             const c = findCategoryByName(t.cat); 
             return `
                 <tr>
-                    <td>${t.desc}${t.projected ? ' <span class="chip">Previsto</span>' : ''}</td>
+                    <td>${escapeHTML(t.desc)}${t.projected ? ' <span class="chip">Previsto</span>' : ''}</td>
                     <td>
                         <span class="cat-tag">
-                            <span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${t.cat}
+                            <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(t.cat)}
                         </span>
                     </td>
                     <td style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500">
@@ -1914,10 +2674,10 @@
                 <div class="mobile-card">
                     <div class="card-header">
                         <span style="font-size:13px;color:var(--color-text-primary);font-weight:500">
-                            ${t.desc} ${t.projected ? '<span style="font-weight:400;color:var(--color-text-secondary);font-size:11px">(Previsto)</span>' : ''}
+                            ${escapeHTML(t.desc)} ${t.projected ? '<span style="font-weight:400;color:var(--color-text-secondary);font-size:11px">(Previsto)</span>' : ''}
                         </span>
                         <span class="cat-tag">
-                            <span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${t.cat}
+                            <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(t.cat)}
                         </span>
                     </div>
                     <div class="card-footer">
@@ -1928,10 +2688,15 @@
                 </div>
             `;
         }).join('');
+        if (!ts.length) {
+            document.getElementById('recentTbody').innerHTML = '<tr><td colspan="3"><div class="empty-state">Nenhuma movimentação neste mês.</div></td></tr>';
+            document.getElementById('recentCards').innerHTML = '<div class="empty-state">Nenhuma movimentação neste mês.</div>';
+        }
     }
 
-    function renderTrans() { 
-        const data = monthTrans();
+    function renderTrans() {
+        const term = transactionSearch.trim().toLocaleLowerCase('pt-BR');
+        const data = monthTrans().filter(t => !term || [t.desc, t.cat, t.tipo, t.sub, fmt(t.valor)].some(value => String(value || '').toLocaleLowerCase('pt-BR').includes(term)));
         
         // Renderização para Computador (Tabela)
         document.getElementById('transTbody').innerHTML = data.map(t => { 
@@ -1939,10 +2704,10 @@
             return `
                 <tr>
                     <td>${fmtDate(t.date)}</td>
-                    <td>${t.desc}</td>
+                    <td>${escapeHTML(t.desc)}</td>
                     <td>
                         <span class="cat-tag">
-                            <span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${t.cat}
+                        <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(t.cat)}
                         </span>
                     </td>
                     <td>
@@ -1970,10 +2735,10 @@
                     <div class="card-header">
                         <span style="font-size:12px;color:var(--color-text-secondary)">${fmtDate(t.date)}</span>
                         <span class="cat-tag">
-                            <span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${t.cat}
+                            <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(t.cat)}
                         </span>
                     </div>
-                    <div class="card-body">${t.desc}</div>
+                    <div class="card-body">${escapeHTML(t.desc)}</div>
                     <div class="card-footer">
                         <span style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500;font-size:15px">
                             ${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}
@@ -1986,6 +2751,11 @@
                 </div>
             `;
         }).join('');
+        if (!data.length) {
+            const message = term ? 'Nenhuma transação corresponde à sua busca.' : 'Nenhuma transação neste mês. Adicione a primeira para começar.';
+            document.getElementById('transTbody').innerHTML = `<tr><td colspan="6"><div class="empty-state">${message}</div></td></tr>`;
+            document.getElementById('transCards').innerHTML = `<div class="empty-state">${message}</div>`;
+        }
     }
 
     function renderFixos() { 
@@ -1994,10 +2764,10 @@
             const c = findCategoryByName(f.cat); 
             return `
                 <tr>
-                    <td>${f.desc}</td>
+                    <td>${escapeHTML(f.desc)}</td>
                     <td>
                         <span class="cat-tag">
-                            <span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${f.cat}
+                        <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(f.cat)}
                         </span>
                     </td>
                     <td>Dia ${f.dia}</td>
@@ -2020,10 +2790,10 @@
                     <div class="card-header">
                         <span style="font-size:12px;color:var(--color-text-secondary)">Todo Dia ${f.dia}</span>
                         <span class="cat-tag">
-                            <span class="cat-dot" style="background:${c ? c.color : '#888'}"></span>${f.cat}
+                            <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(f.cat)}
                         </span>
                     </div>
-                    <div class="card-body">${f.desc}</div>
+                    <div class="card-body">${escapeHTML(f.desc)}</div>
                     <div class="card-footer">
                         <span style="font-weight:500;font-size:15px">${fmt(f.valor)}</span>
                         <div class="actions">
@@ -2034,6 +2804,53 @@
                 </div>
             `;
         }).join('');
+        if (!fixos.length) {
+            document.getElementById('fixoTbody').innerHTML = '<tr><td colspan="5"><div class="empty-state">Nenhum gasto fixo cadastrado.</div></td></tr>';
+            document.getElementById('fixoCards').innerHTML = '<div class="empty-state">Nenhum gasto fixo cadastrado.</div>';
+        }
+    }
+
+    function noteTime(value) {
+        if (!value) return 0;
+        if (typeof value.toDate === 'function') return value.toDate().getTime();
+        if (typeof value.seconds === 'number') return value.seconds * 1000;
+        const parsed = new Date(value).getTime();
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function fmtNoteDate(value) {
+        const timestamp = noteTime(value);
+        if (!timestamp) return 'Agora';
+        return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(timestamp));
+    }
+
+    function renderNotes() {
+        const grid = document.getElementById('notesGrid');
+        if (!grid) return;
+        const term = noteSearch.trim().toLocaleLowerCase('pt-BR');
+        const filtered = [...notes]
+            .filter(note => !term || [note.title, note.content].some(value => String(value || '').toLocaleLowerCase('pt-BR').includes(term)))
+            .sort((a, b) => noteTime(b.updatedAt || b.createdAt) - noteTime(a.updatedAt || a.createdAt));
+
+        if (!filtered.length) {
+            const message = term ? 'Nenhuma nota corresponde à sua busca.' : 'Crie sua primeira anotação para guardar lembretes, ideias ou objetivos.';
+            grid.innerHTML = `<div class="notes-empty"><div class="notes-empty-icon">▤</div><strong>${term ? 'Nada encontrado' : 'Seu bloco está vazio'}</strong><span>${message}</span></div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(note => `
+            <article class="note-card">
+                <div class="note-card-header">
+                    <div class="note-title">${escapeHTML(note.title)}</div>
+                    <div class="actions">
+                        <button class="icon-btn" onclick="editNote('${escapeHTML(note.id)}')" title="Editar nota" aria-label="Editar nota">✎</button>
+                        <button class="icon-btn" onclick="delNote('${escapeHTML(note.id)}')" title="Excluir nota" aria-label="Excluir nota">✕</button>
+                    </div>
+                </div>
+                <div class="note-content">${escapeHTML(note.content)}</div>
+                <div class="note-footer"><span>Atualizada em ${fmtNoteDate(note.updatedAt || note.createdAt)}</span><span>${String(note.content || '').length} caracteres</span></div>
+            </article>
+        `).join('');
     }
 
     function renderEvents() { 
@@ -2045,8 +2862,8 @@
         } 
         
         el.innerHTML = events.map(e => `
-            <div class="evt-item${selEvt === e.id ? ' selected' : ''}" onclick="selectEvt('${e.id}')">
-                <div class="evt-name">${e.name}</div>
+            <div class="evt-item${selEvt === e.id ? ' selected' : ''}" onclick="selectEvt('${escapeHTML(e.id)}')">
+                <div class="evt-name">${escapeHTML(e.name)}</div>
                 <div class="evt-meta">
                     <span>${fmtDate(e.date)}</span>
                     <span>${fmt(e.valor)}</span>
@@ -2054,7 +2871,7 @@
             </div>
             ${selEvt === e.id ? `
                 <div class="evt-detail">
-                    <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">${e.notas || 'Sem anotações registradas'}</div>
+                    <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">${escapeHTML(e.notas || 'Sem anotações registradas')}</div>
                     <div style="display:flex;gap:6px">
                         <button class="add-btn" onclick="editEvt('${e.id}')">✎ Editar</button>
                         <button class="add-btn" style="color:#E24B4A" onclick="delEvt('${e.id}')">✕ Excluir</button>
@@ -2062,6 +2879,7 @@
                 </div>
             ` : ''}
         `).join(''); 
+        if (!events.length) el.innerHTML = '<div class="empty-state">Seus eventos aparecerão aqui.</div>';
     }
 
     function renderEventoPane() { 
@@ -2095,7 +2913,7 @@
         document.getElementById('evtExpTbody').innerHTML = evExps.map(x => `
             <tr>
                 <td>${fmtDate(x.date)}</td>
-                <td>${x.desc}</td>
+                <td>${escapeHTML(x.desc)}</td>
                 <td style="color:#E24B4A;font-weight:500">-${fmt(x.valor)}</td>
                 <td>
                     <div class="actions">
@@ -2112,7 +2930,7 @@
                 <div class="card-header">
                     <span style="font-size:12px;color:var(--color-text-secondary)">${fmtDate(x.date)}</span>
                 </div>
-                <div class="card-body">${x.desc}</div>
+                <div class="card-body">${escapeHTML(x.desc)}</div>
                 <div class="card-footer">
                     <span style="color:#E24B4A;font-weight:500;font-size:15px">-${fmt(x.valor)}</span>
                     <div class="actions">
@@ -2122,6 +2940,10 @@
                 </div>
             </div>
         `).join('');
+        if (!evExps.length) {
+            document.getElementById('evtExpTbody').innerHTML = '<tr><td colspan="4"><div class="empty-state">Nenhum gasto registrado neste evento.</div></td></tr>';
+            document.getElementById('evtExpCards').innerHTML = '<div class="empty-state">Nenhum gasto registrado neste evento.</div>';
+        }
     }
 
     function renderAll() { 
@@ -2131,6 +2953,7 @@
         renderRecent(); 
         renderTrans(); 
         renderFixos(); 
+        renderNotes();
         renderEvents(); 
         
         if (selEvt) {
@@ -2155,7 +2978,6 @@
     }; 
     
     window.editEvt = function(id) { 
-        event.stopPropagation(); 
         modal = {type:'evt', editId:id}; 
         const ev = events.find(x => x.id === id);
         showModal(evtForm(ev), 'Editar Evento'); 
@@ -2165,6 +2987,13 @@
         modal = {type:'evtExp', editId:id}; 
         const ex = eventExpenses.find(x => x.id === id);
         showModal(evtExpForm(ex), 'Editar Gasto do Evento'); 
+    };
+
+    window.editNote = function(id) {
+        modal = { type: 'note', editId: id };
+        const note = notes.find(item => item.id === id);
+        if (!note) return showToast('Não foi possível localizar esta nota.', 'error');
+        showModal(noteForm(note), 'Editar nota');
     };
     
     window.selectEvt = function(id) { 
@@ -2186,15 +3015,82 @@
         const ov = document.getElementById('modalOverlay'); 
         ov.innerHTML = `
             <div class="modal">
-                <h3>${title}</h3>
+                <div class="modal-header">
+                    <h3>${escapeHTML(title)}</h3>
+                    <button class="icon-btn modal-close" onclick="closeModal()" aria-label="Fechar janela">×</button>
+                </div>
+                <div class="modal-error" id="modalError" role="alert" aria-live="polite"></div>
                 ${html}
             </div>
         `; 
-        ov.classList.remove('hidden'); 
+        ov.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => ov.querySelector('input:not([type="hidden"]), select, textarea, button')?.focus());
     };
-    
-    window.closeModal = function() { 
-        document.getElementById('modalOverlay').classList.add('hidden'); 
+
+    function hideModal() {
+        const overlay = document.getElementById('modalOverlay');
+        overlay.classList.add('hidden');
+        overlay.innerHTML = '';
+        document.body.style.overflow = '';
+    }
+
+    window.closeModal = function() {
+        if (dialogResolver) {
+            const resolve = dialogResolver;
+            dialogResolver = null;
+            resolve(null);
+        }
+        hideModal();
+    };
+
+    window.openTextDialog = function({ title, label, value = '', placeholder = '', confirmLabel = 'Salvar' }) {
+        return new Promise(resolve => {
+            showModal(`
+                <div class="dialog-icon">✦</div>
+                <div class="form-row">
+                    <label for="dialogTextInput">${escapeHTML(label)}</label>
+                    <input id="dialogTextInput" type="text" maxlength="100" value="${escapeHTML(value)}" placeholder="${escapeHTML(placeholder)}" autocomplete="off">
+                </div>
+                <div class="form-actions">
+                    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                    <button class="btn-save" onclick="submitTextDialog()">${escapeHTML(confirmLabel)}</button>
+                </div>
+            `, title);
+            dialogResolver = resolve;
+            setTimeout(() => { const input = document.getElementById('dialogTextInput'); input?.focus(); input?.select(); }, 0);
+        });
+    };
+
+    window.submitTextDialog = function() {
+        const input = document.getElementById('dialogTextInput');
+        const value = input?.value.trim();
+        if (!value) return showModalError('Digite um nome para continuar.', 'dialogTextInput');
+        const resolve = dialogResolver;
+        dialogResolver = null;
+        hideModal();
+        resolve?.(value);
+    };
+
+    window.confirmAction = function({ title, message, confirmLabel = 'Confirmar' }) {
+        return new Promise(resolve => {
+            showModal(`
+                <div class="dialog-icon danger">!</div>
+                <p class="modal-description">${escapeHTML(message)}</p>
+                <div class="form-actions">
+                    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                    <button class="btn-danger" onclick="resolveConfirmation()">${escapeHTML(confirmLabel)}</button>
+                </div>
+            `, title);
+            dialogResolver = resolve;
+        });
+    };
+
+    window.resolveConfirmation = function() {
+        const resolve = dialogResolver;
+        dialogResolver = null;
+        hideModal();
+        resolve?.(true);
     };
 
     // Navegação e Interações da Interface
@@ -2233,11 +3129,28 @@
         modal = {type:'trans', editId:null}; 
         showModal(transForm(null), 'Nova Transação'); 
     }); 
+
+    document.getElementById('transactionSearch').addEventListener('input', event => {
+        transactionSearch = event.target.value;
+        renderTrans();
+    });
+
+    document.getElementById('exportTransBtn').addEventListener('click', exportTransactions);
     
     document.getElementById('addFixoBtn').addEventListener('click', () => { 
         modal = {type:'fixo', editId:null}; 
         showModal(fixoForm(null), 'Novo Gasto Fixo'); 
     }); 
+
+    document.getElementById('addNoteBtn').addEventListener('click', () => {
+        modal = { type: 'note', editId: null };
+        showModal(noteForm(null), 'Nova nota');
+    });
+
+    document.getElementById('noteSearch').addEventListener('input', event => {
+        noteSearch = event.target.value;
+        renderNotes();
+    });
     
     document.getElementById('addEvtBtn').addEventListener('click', (event) => { 
         event.stopPropagation(); 
@@ -2253,6 +3166,34 @@
     document.getElementById('modalOverlay').addEventListener('click', e => { 
         if (e.target === e.currentTarget) closeModal(); 
     }); 
+
+    document.getElementById('modalOverlay').addEventListener('input', e => {
+        e.target.classList?.remove('field-invalid');
+        const error = document.getElementById('modalError');
+        if (error) error.classList.remove('visible');
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !document.getElementById('modalOverlay').classList.contains('hidden')) closeModal();
+        if (event.key === 'Enter' && document.activeElement?.id === 'dialogTextInput') {
+            event.preventDefault();
+            submitTextDialog();
+        }
+    });
+
+    document.getElementById('authPassword').addEventListener('keydown', event => {
+        if (event.key === 'Enter') handleLogin();
+    });
+    document.getElementById('regPassConfirm').addEventListener('keydown', event => {
+        if (event.key === 'Enter') executeSignup();
+    });
+    document.getElementById('regLegalConsent').addEventListener('change', event => {
+        if (event.target.checked) event.target.closest('.legal-consent').classList.remove('field-invalid');
+    });
+
+    window.addEventListener('offline', () => showToast('Você está sem internet. Suas alterações online podem não ser salvas.', 'error', 6000));
+    window.addEventListener('online', () => showToast('Conexão restabelecida.', 'success'));
+    updateThemeButton();
     
     document.querySelectorAll('.cat-subtab').forEach(btn => btn.addEventListener('click', function() { 
         activeCategoryPane = this.dataset.catpane; 

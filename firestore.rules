@@ -1,0 +1,133 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    function accountActive() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('accountDisabled', false) != true;
+    }
+
+    function myFamilyId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+    }
+
+    function belongsToMyFamily(data) {
+      return accountActive() && data.familyId == myFamilyId();
+    }
+
+    match /admins/{uid} {
+      allow get: if isSelf(uid);
+      allow list, create, update, delete: if false;
+    }
+
+    match /users/{uid} {
+      allow get: if isSelf(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSelf(uid)
+        && request.resource.data.familyId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.plan == 'free'
+        && request.resource.data.subscriptionStatus == 'trialing'
+        && request.resource.data.keys().hasOnly([
+          'userId', 'familyId', 'username', 'email', 'theme', 'plan', 'subscriptionStatus',
+          'createdAt', 'termsAcceptedAt', 'termsAcceptedAtClient', 'termsVersion',
+          'privacyNoticeAcknowledgedAt', 'privacyVersion', 'consentSource'
+        ]);
+      allow update: if isSelf(uid)
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['username', 'theme', 'email', 'lastSignInAt'])
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['lastSignInAt'])
+          || request.resource.data.lastSignInAt == request.time);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'plan', 'subscriptionStatus', 'accountDisabled', 'adminUpdatedAt', 'adminUpdatedBy'
+        ])
+        && request.resource.data.adminUpdatedAt == request.time
+        && request.resource.data.adminUpdatedBy == request.auth.uid
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['plan'])
+          || request.resource.data.plan in ['free', 'essential', 'pro'])
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscriptionStatus'])
+          || request.resource.data.subscriptionStatus in ['trialing', 'active', 'past_due', 'canceled'])
+        && !(uid == request.auth.uid && request.resource.data.get('accountDisabled', false) == true);
+      allow delete: if false;
+    }
+
+    match /familySettings/{familyId} {
+      allow read, create, update: if accountActive() && familyId == myFamilyId();
+      allow delete: if accountActive() && familyId == myFamilyId();
+    }
+
+    match /transactions/{documentId} {
+      allow read, delete: if belongsToMyFamily(resource.data);
+      allow create: if belongsToMyFamily(request.resource.data);
+      allow update: if belongsToMyFamily(resource.data)
+        && belongsToMyFamily(request.resource.data)
+        && request.resource.data.familyId == resource.data.familyId;
+    }
+
+    match /fixos/{documentId} {
+      allow read, delete: if belongsToMyFamily(resource.data);
+      allow create: if belongsToMyFamily(request.resource.data);
+      allow update: if belongsToMyFamily(resource.data)
+        && belongsToMyFamily(request.resource.data)
+        && request.resource.data.familyId == resource.data.familyId;
+    }
+
+    match /events/{documentId} {
+      allow read, delete: if belongsToMyFamily(resource.data);
+      allow create: if belongsToMyFamily(request.resource.data);
+      allow update: if belongsToMyFamily(resource.data)
+        && belongsToMyFamily(request.resource.data)
+        && request.resource.data.familyId == resource.data.familyId;
+    }
+
+    match /eventExpenses/{documentId} {
+      allow read, delete: if belongsToMyFamily(resource.data);
+      allow create: if belongsToMyFamily(request.resource.data);
+      allow update: if belongsToMyFamily(resource.data)
+        && belongsToMyFamily(request.resource.data)
+        && request.resource.data.familyId == resource.data.familyId;
+    }
+
+    match /notes/{documentId} {
+      allow read, delete: if belongsToMyFamily(resource.data);
+      allow create: if belongsToMyFamily(request.resource.data);
+      allow update: if belongsToMyFamily(resource.data)
+        && belongsToMyFamily(request.resource.data)
+        && request.resource.data.familyId == resource.data.familyId;
+    }
+
+    match /adminAuditLogs/{documentId} {
+      allow create: if isAdmin()
+        && request.resource.data.adminUid == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.keys().hasOnly(['adminUid', 'action', 'targetUid', 'details', 'createdAt']);
+      allow read, update, delete: if false;
+    }
+
+    match /subscriptions/{documentId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
