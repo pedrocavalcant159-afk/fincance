@@ -437,6 +437,21 @@
             color: #fca5a5;
         }
 
+        .clear-data-btn {
+            padding: 6px 12px;
+            border: 1px solid rgba(185, 28, 28, .35);
+            border-radius: 6px;
+            color: #b91c1c;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .clear-data-btn:hover { background: rgba(185, 28, 28, .08); }
+        body.dark-theme .clear-data-btn { border-color: rgba(248, 113, 113, .3); color: #fca5a5; }
+        body.dark-theme .clear-data-btn:hover { background: rgba(185, 28, 28, .16); }
+
         /* =========================================
            BARRAS DE GRÁFICO (CATEGORIAS)
            ========================================= */
@@ -933,6 +948,7 @@
         .btn-danger { background: #e54861; border: 1px solid #fb7185; color: white; border-radius: 7px; padding: 10px 16px; cursor: pointer; font-weight: 650; }
         .btn-loading { color: transparent !important; position: relative; pointer-events: none; }
         .btn-loading::after { content: ""; position: absolute; width: 16px; height: 16px; inset: 0; margin: auto; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; animation: spin .65s linear infinite; }
+        .clear-data-btn.btn-loading::after { border-color: rgba(225,29,72,.22); border-top-color: var(--negative); }
 
         .toast-region { position: fixed; z-index: 5000; right: 18px; bottom: 18px; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { width: min(360px, calc(100vw - 32px)); display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; padding: 12px 14px; border: 1px solid var(--color-border-tertiary); border-radius: 12px; color: var(--color-text-primary); background: var(--color-background-primary); box-shadow: var(--shadow-lg); pointer-events: auto; animation: toastIn .3s cubic-bezier(.2,.8,.2,1) both; }
@@ -1136,8 +1152,8 @@
             box-shadow: none;
         }
         .btn-danger { color: #FFFFFF; border-color: var(--negative); background: var(--negative); }
-        .logout-btn { border-radius: var(--radius-sm); background: transparent; border-color: #C99B9B; color: var(--negative); }
-        body.dark-theme .logout-btn { background: transparent; border-color: #895E62; color: #E2B6B6; }
+        .logout-btn, .clear-data-btn { border-radius: var(--radius-sm); background: transparent; border-color: #C99B9B; color: var(--negative); }
+        body.dark-theme .logout-btn, body.dark-theme .clear-data-btn { background: transparent; border-color: #895E62; color: #E2B6B6; }
 
         .bar-wrap { height: 6px; border-radius: 1px; }
         .bar-fill { min-height: 0; border-radius: 1px; transition: width .28s ease; }
@@ -1292,6 +1308,10 @@
         .metric-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
         .metric-value { font-size: 23px; font-weight: 700; }
         .metric-value.blue { color: #2563EB; }
+        body.dark-theme .metric-value.green { color: #34D399; }
+        body.dark-theme .metric-value.red { color: #FB7185; }
+        body.dark-theme .metric-value.blue { color: #60A5FA; }
+        body.dark-theme .metric-value.orange { color: #FBBF24; }
 
         .tab, .cat-subtab, .chart-mode-btn, .add-btn, .icon-btn, .month-nav button, .add-evt-btn {
             position: relative;
@@ -1626,6 +1646,7 @@
                 <div style="display:flex; align-items:center; gap: 10px;">
                     <span class="plan-badge" id="planBadge">Plano gratuito</span>
                     <button id="themeToggle" class="icon-btn" title="Alternar tema" aria-label="Alternar tema">☀</button>
+                    <button class="clear-data-btn" id="clearDataBtn" onclick="clearAllUserData()" title="Apagar todos os lançamentos, eventos e notas">Limpar dados</button>
                     <button class="logout-btn" id="topbarLogoutBtn" onclick="handleLogout()">Sair</button>
                 </div>
                 
@@ -1819,7 +1840,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, setDoc, getDoc, getDocs, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -2210,6 +2231,37 @@
         unsubscribers.forEach(unsub => unsub()); 
         unsubscribers = [];
         
+        renderAll();
+    }
+
+    function resetClearedDataState() {
+        transactions = [];
+        fixos = [];
+        events = [];
+        eventExpenses = [];
+        notes = [];
+        CATS = defaultCategories();
+        selEvt = null;
+        pendingHighlightId = null;
+        transactionSearch = '';
+        transactionTypeFilter = '';
+        transactionCategoryFilter = '';
+        transactionSubtypeFilter = '';
+        noteSearch = '';
+
+        const transactionSearchInput = document.getElementById('transactionSearch');
+        const transactionTypeSelect = document.getElementById('transactionTypeFilter');
+        const transactionCategorySelect = document.getElementById('transactionCategoryFilter');
+        const transactionSubtypeSelect = document.getElementById('transactionSubtypeFilter');
+        const noteSearchInput = document.getElementById('noteSearch');
+        if (transactionSearchInput) transactionSearchInput.value = '';
+        if (transactionTypeSelect) transactionTypeSelect.value = '';
+        if (transactionCategorySelect) transactionCategorySelect.value = '';
+        if (transactionSubtypeSelect) transactionSubtypeSelect.value = '';
+        if (noteSearchInput) noteSearchInput.value = '';
+
+        document.getElementById('tabEvento')?.classList.add('hidden');
+        document.querySelector('.tab[data-pane="visao"]')?.click();
         renderAll();
     }
 
@@ -2776,6 +2828,48 @@
             showToast('Nota excluída.');
         } catch (error) {
             showToast(firebaseMessage(error, 'exclusão da nota'), 'error');
+        }
+    };
+
+    async function deleteDocumentRefsInBatches(references) {
+        const batchSize = 450;
+        for (let index = 0; index < references.length; index += batchSize) {
+            const batch = writeBatch(db);
+            references.slice(index, index + batchSize).forEach(reference => batch.delete(reference));
+            await batch.commit();
+        }
+    }
+
+    window.clearAllUserData = async function() {
+        const confirmed = await confirmClearData();
+        if (!confirmed) return;
+
+        const button = document.getElementById('clearDataBtn');
+        setButtonLoading(button, true);
+
+        try {
+            if (isVisitor) {
+                resetClearedDataState();
+                showToast('Dados da demonstração apagados.');
+                return;
+            }
+
+            if (!currentUser || !currentFamilyId) throw new Error('Usuário não autenticado.');
+
+            const collectionNames = ['transactions', 'fixos', 'events', 'eventExpenses', 'notes'];
+            const snapshots = await Promise.all(collectionNames.map(name =>
+                getDocs(query(collection(db, name), where('familyId', '==', currentFamilyId)))
+            ));
+            const references = snapshots.flatMap(snapshot => snapshot.docs.map(item => item.ref));
+            references.push(doc(db, 'familySettings', currentFamilyId));
+
+            await deleteDocumentRefsInBatches(references);
+            resetClearedDataState();
+            showToast('Todos os dados foram apagados. Sua conta foi mantida.', 'success', 5200);
+        } catch (error) {
+            showToast(firebaseMessage(error, 'limpeza dos dados'), 'error', 5200);
+        } finally {
+            setButtonLoading(button, false);
         }
     };
 
@@ -4127,6 +4221,37 @@
         });
     };
 
+    window.confirmClearData = function() {
+        return new Promise(resolve => {
+            showModal(`
+                <div class="dialog-icon danger">!</div>
+                <p class="modal-description">Esta ação apaga permanentemente todas as transações, gastos fixos, eventos, despesas de eventos, notas e categorias personalizadas. Sua conta continuará ativa.</p>
+                <div class="form-row">
+                    <label for="clearDataConfirmationInput">Digite <strong>LIMPAR</strong> para confirmar</label>
+                    <input id="clearDataConfirmationInput" type="text" maxlength="6" placeholder="LIMPAR" autocomplete="off" autocapitalize="characters">
+                </div>
+                <div class="form-actions">
+                    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                    <button class="btn-danger" onclick="resolveClearDataConfirmation()">Apagar todos os dados</button>
+                </div>
+            `, 'Limpar todos os dados?');
+            dialogResolver = resolve;
+            setTimeout(() => document.getElementById('clearDataConfirmationInput')?.focus(), 0);
+        });
+    };
+
+    window.resolveClearDataConfirmation = function() {
+        const input = document.getElementById('clearDataConfirmationInput');
+        if (input?.value.trim() !== 'LIMPAR') {
+            showModalError('Digite LIMPAR exatamente como mostrado para continuar.', 'clearDataConfirmationInput');
+            return;
+        }
+        const resolve = dialogResolver;
+        dialogResolver = null;
+        hideModal();
+        resolve?.(true);
+    };
+
     window.resolveConfirmation = function() {
         const resolve = dialogResolver;
         dialogResolver = null;
@@ -4248,6 +4373,10 @@
         if (event.key === 'Enter' && document.activeElement?.id === 'dialogTextInput') {
             event.preventDefault();
             submitTextDialog();
+        }
+        if (event.key === 'Enter' && document.activeElement?.id === 'clearDataConfirmationInput') {
+            event.preventDefault();
+            resolveClearDataConfirmation();
         }
     });
 
