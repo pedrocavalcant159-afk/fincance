@@ -1312,6 +1312,10 @@
         body.dark-theme .metric-value.red { color: #FB7185; }
         body.dark-theme .metric-value.blue { color: #60A5FA; }
         body.dark-theme .metric-value.orange { color: #FBBF24; }
+        .amount-positive { color: #1D9E75; }
+        .amount-negative { color: #E24B4A; }
+        body.dark-theme .amount-positive { color: #34D399; }
+        body.dark-theme .amount-negative { color: #FB7185; }
 
         .tab, .cat-subtab, .chart-mode-btn, .add-btn, .icon-btn, .month-nav button, .add-evt-btn {
             position: relative;
@@ -3777,7 +3781,7 @@
                             <span class="cat-dot" style="background:${escapeHTML(c ? c.color : '#888')}"></span>${escapeHTML(t.cat)}
                         </span>
                     </td>
-                    <td style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500">
+                    <td class="${t.tipo === 'entrada' ? 'amount-positive' : 'amount-negative'}" style="font-weight:500">
                         ${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}
                     </td>
                 </tr>
@@ -3798,7 +3802,7 @@
                         </span>
                     </div>
                     <div class="card-footer">
-                        <span style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500">
+                        <span class="${t.tipo === 'entrada' ? 'amount-positive' : 'amount-negative'}" style="font-weight:500">
                             ${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}
                         </span>
                     </div>
@@ -3844,7 +3848,7 @@
                         <span class="badge badge-${t.tipo === 'entrada' ? 'entrada' : 'saida'}">${t.tipo === 'entrada' ? 'Entrada' : 'Saída'}</span>
                         <span class="badge badge-${t.sub}" style="margin-left:4px">${t.sub === 'fixo' ? 'Fixo' : 'Variável'}</span>
                     </td>
-                    <td style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500">
+                    <td class="${t.tipo === 'entrada' ? 'amount-positive' : 'amount-negative'}" style="font-weight:500">
                         ${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}
                     </td>
                     <td>
@@ -3870,7 +3874,7 @@
                     </div>
                     <div class="card-body">${escapeHTML(t.desc)}</div>
                     <div class="card-footer">
-                        <span style="color:${t.tipo === 'entrada' ? '#1D9E75' : '#E24B4A'};font-weight:500;font-size:15px">
+                        <span class="${t.tipo === 'entrada' ? 'amount-positive' : 'amount-negative'}" style="font-weight:500;font-size:15px">
                             ${t.tipo === 'entrada' ? '+' : '-'}${fmt(t.valor)}
                         </span>
                         <div class="actions">
@@ -4049,7 +4053,7 @@
             <tr style="--row-index:${index}">
                 <td>${fmtDate(x.date)}</td>
                 <td>${escapeHTML(x.desc)}</td>
-                <td style="color:#E24B4A;font-weight:500">-${fmt(x.valor)}</td>
+                <td class="amount-negative" style="font-weight:500">-${fmt(x.valor)}</td>
                 <td>
                     <div class="actions">
                         <button class="icon-btn" onclick="editEvtExp('${x.id}')">✎</button>
@@ -4067,7 +4071,7 @@
                 </div>
                 <div class="card-body">${escapeHTML(x.desc)}</div>
                 <div class="card-footer">
-                    <span style="color:#E24B4A;font-weight:500;font-size:15px">-${fmt(x.valor)}</span>
+                    <span class="amount-negative" style="font-weight:500;font-size:15px">-${fmt(x.valor)}</span>
                     <div class="actions">
                         <button class="icon-btn" onclick="editEvtExp('${x.id}')">✎</button>
                         <button class="icon-btn" onclick="delEvtExp('${x.id}')" style="color:#e24b4a">✕</button>
